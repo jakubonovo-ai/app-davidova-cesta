@@ -14,9 +14,11 @@ a store — detail lives in STATUS.md and session notes. One line per session in
   on a projector; 5 locations unlock in sequence, one per day; progress in
   `localStorage`. Deployed via GitHub Pages but MUST work offline. Simplicity first.
 - Stack overrides the global Python default — this is a static web app (see CLAUDE.md).
+- Public repo: github.com/jakubonovo-ai/app-davidova-cesta · Pages:
+  jakubonovo-ai.github.io/app-davidova-cesta · BRS .docx are git-ignored (local-only).
 
 ## Last session
 _Newest first. ONE line per session: outcome headline + (resume: next action) if paused._
 
-- **S1 (2026-07-01)** — Set up agentic starter kit (lean adapted spine) + local git
-  repo + GitHub. App not built yet; planning session pending.
+- **S1 (2026-07-01)** — Set up agentic starter kit (lean adapted spine) + public
+  GitHub repo + Pages. App not built yet (resume: planning session).

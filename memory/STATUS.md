@@ -9,15 +9,18 @@ one Read call ingests it (move old detail to session notes when it grows)._
   feedback seeds; tasks ACTIVE/BACKLOG/PARKED; `newsession`/`endsession`/`prever`/
   `deepreview` skills; adapted `.claude/settings.json`; `.gitignore`). Skipped the
   Python syntax hook + pre-commit guard scripts + audit/tasktodo/innovate/explain
-  (wrong stack / solo / very simple app — see CLAUDE.md "tooling scope"). Initialized
-  local git and set up GitHub. **No app code written yet.**
+  (wrong stack / solo / very simple app — see CLAUDE.md "tooling scope"). Set up git
+  and a **public GitHub repo** (github.com/jakubonovo-ai/app-davidova-cesta) with
+  **GitHub Pages** on `main` → https://jakubonovo-ai.github.io/app-davidova-cesta/ .
+  The BRS `.docx` files are **git-ignored (local-only)** because the repo is public.
+  **No app code written yet** — only a placeholder index.html.
 
 ## Phase / milestone status
 
+- ✅ Repo + GitHub Pages set up (placeholder page only)
 - ⬜ Planning session (turn the BRS into a concrete build plan) — NEXT
 - ⬜ App build (map, 5 locations, password, unlock animation, progress, audio)
 - ⬜ Offline verification (open index.html with no internet)
-- ⬜ GitHub Pages deploy
 - ⬜ Camp-ready hand-off to the leader
 
 ## System / data state
@@ -28,11 +31,13 @@ one Read call ingests it (move old detail to session notes when it grows)._
 - Assets present: `app_images/` (map, 5 locations + their locks, symbols, seal,
   parchment, light, fog-ish pieces). BRS present as two `.docx` files.
 - Environment on this machine: Python is `py` (bare `python` is the broken Store
-  stub); **Node is NOT installed**; `gh` CLI status: see session notes.
+  stub); **Node is NOT installed**; `gh` CLI 2.95.0 installed at
+  `C:\Program Files\GitHub CLI\gh.exe`, authed as **jakubonovo-ai**.
 
 ## Open decisions
-- GitHub Pages vs offline-only for camp delivery — Pages set up for distribution, but
-  the camp runs offline. Confirm the final delivery method in planning.
+- Final camp delivery method: Pages URL needs internet; the camp room is likely
+  offline, so plan to also hand the leader the files to open `index.html` directly.
+  Confirm in planning.
 - Whether to keep large binary assets (`app_images/`) in git or manage separately.
 
 ## Critical rules (not derivable from code)
