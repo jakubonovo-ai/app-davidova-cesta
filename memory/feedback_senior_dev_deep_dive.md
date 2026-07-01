@@ -38,50 +38,88 @@ For every non-trivial task — anything beyond a single-file edit or single-func
 Each answers "what kind of future bug does this prevent?" Walk them all on every
 non-trivial task. Mark applicable / not; record findings.
 
-**Tailored to the ICS SAQ Reviewer stack** (single-user batch Excel processor +
-AI calls via AWS Bedrock + Streamlit UI). Last reviewed 2026-06-17.
+**Tailored to the Dávidova cesta stack** (offline HTML + CSS + JS app projected on a
+wall at a kids' camp; no server, no build, no framework, no network; progress in
+`localStorage`; 5 locations unlock strictly in sequence, one per day). Last reviewed
+2026-07-01.
 
-### Data integrity (silent misclassification)
+### Anti-spoiler / content sequencing (the project's north-star risk)
 
-1. **Cross-consumer drift after a semantics change** — when a constant, config key, or column name's meaning shifts, every consumer reading it may now be wrong. Grep ALL consumers (batch_processor, Streamlit pages, test_prompt_v2, config_manager), decide per site whether new or old semantics is wanted, and coalesce or rename.
-2. **Invariant breakage** — a formerly-true relationship that no longer holds (e.g., "follow_up_col is always one of these N strings", "_extract_assessment_type always returns a key in assessment_rules.json"). Document the invariant change at the affected constant/column.
-3. **String-matching fragility** — the system relies on substring `in` checks for assessment types, answer values, and comment keywords. A changed upstream string (GCP export format change, new answer option, trailing whitespace) silently misclassifies. Check: any new or modified string match — is it tested with boundary variants (case, whitespace, partial overlap)?
+1. **Future-content leak into the DOM (BR-003)** — a location that is NOT yet completed
+   (states `uzamknuta`/`aktivna`) must never inject its symbol image, its location name,
+   or any `alt`/`title`/text revealing it. **The location names ARE the passwords**
+   (day 4's location "Jaskyňa" is literally the password `JASKYŇA`), so a leaked name is a
+   leaked answer. Check every render branch: for a non-completed stop, prove no `img.src`,
+   `alt`, `title`, or text node carries the name/symbol. This is the single most important
+   category — a spoiler is a real defect here.
+2. **Sequence-integrity** — locations unlock strictly in order, exactly one per day, no
+   scoring. Check: can any state path (demo hardcode, localStorage value, off-by-one) mark
+   day N+1 active/done while day N is still locked? The "active" stop is the ONLY unlockable
+   one; all later stops stay locked.
 
-### Excel I/O robustness
+### Offline / `file://` robustness
 
-4. **Excel column position drift** — the system assumes specific column indices (K=10, L=11) and exact column names from GCP export. If the upstream export changes column order or renames headers, processing silently writes to wrong cells or crashes. Check: does the change add a new hardcoded column index or name? Is the fallback explicit?
-5. **Config file staleness** — scoping matrix, manager mapping, and assessment rules are year-specific JSON files (e.g., `le_scoping_2025.json`). If code references a file that doesn't exist for the current year, it may fail silently or with a cryptic error. Check: does the change add a new config dependency? Is the fallback path explicit and logged?
+3. **`file://` incompatibility** — the app must run by double-clicking `index.html` with no
+   server and no internet. Check: no ES modules (`type="module"`), no `fetch`/XHR, no CDN or
+   absolute `http(s)` URLs, no web-font pulled from the network — only relative paths and
+   local assets. Anything that needs a server is a defect.
+4. **Asset-path exactness (case-sensitive)** — every `src`/`url()` must match the real
+   filename in `app_images/` exactly, including case and extension (GitHub Pages is
+   case-sensitive: `MAPA.jfif` ≠ `mapa.jfif`). A typo shows a broken image on the wall.
+   Check: grep every asset reference and confirm the file exists with that exact name.
 
-### AI integration
+### State & persistence (`localStorage`)
 
-6. **AI prompt regression** — any change near the AI call path (reviewer, prompt text, pre/post-processing of AI results) could shift acceptance rates unpredictably (v2.3 lesson). Check: does this change touch anything in the chain `_build_prompt()` → `review_entry()` → result parsing → follow_up mapping? If yes, integration test (`scripts/test_prompt_v2.py`) MUST run with live API before shipping.
-7. **AI error path handling** — when the AI call fails (timeout, SSO expiry, parse error, unexpected response shape), the row must still get a safe status (flagged for Human Review, never silently pass as OK). Check: what happens to Column K/L when `review_entry()` throws or returns garbage? Grep for `try/except` around the AI call and verify the fallback writes HUMAN_REVIEW.
+5. **Storage key/shape stability** — the key `davidovaCesta.v1` and its object shape
+   (`{verzia, dokonceneDni, koniecVideny}`) must not silently change once the leader has real
+   saved progress; any shape change needs an explicit versioned migration. Save must happen
+   BEFORE the unlock animation so a refresh mid-animation restores a consistent state (EC-003).
+6. **Storage-unavailable fallback** — `localStorage` can throw or be blocked (incognito,
+   privacy settings). Reads/writes must be guarded (try/catch or in-memory shim) so the app
+   never crashes on the projector. Check: is every `localStorage` access wrapped?
+
+### Password matching
+
+7. **Password-normalization correctness** — comparison must ignore diacritics, case, and
+   extra/edge whitespace (NFD + strip marks + lowercase + trim + collapse inner spaces), so a
+   correct answer is never rejected for cosmetic reasons. Boundary: empty field submits
+   nothing; double-click / repeated Enter must not double-fire the unlock.
+
+### Projector / display
+
+8. **16:9 integrity & legibility** — the stage must stay exactly 16:9 without distortion or
+   crop across window sizes (backing images are 1672×941 = 16:9, so `object-fit: fill` is
+   distortion-free ONLY while the stage is truly 16:9 — verify the scaling math). Key text
+   ≥48px, high contrast, readable from across a room.
 
 ### Code shape
 
-8. **Naming collisions** — a local variable sharing a name with a constant or column name (e.g., `status` the local vs `StatusValue.OK` the constant vs `'Status'` the column header). When ambiguous, rename the local or comment the distinction.
-9. **Premature abstraction** — module-level constants for things that should be fields, config entries for hypothetical use cases, stubs for unbuilt features. YAGNI. If it has no consumer in production or test code, it's dead weight.
-
-### Documentation consistency
-
-10. **Follow-up action message consistency** — Column K messages are consumed by auditors who need to act on them. Every `FollowUpAction` constant must appear in all three docs: `docs/guides/TROUBLESHOOTING.md`, `docs/guides/USAGE.md`, and `docs/validation/VALIDATION_RULES_v2.0.md`. Check: grep for the new string in all three; if missing, add it.
-
-### Test correctness
-
-11. **Mock attribute auto-creation hides false positives** — on a default MagicMock, `obj.new_field` is a truthy mock, NOT None. Tests that branch on `is None` or check truthiness silently take the wrong path. Set fixture defaults explicitly for fields the code branches on.
-12. **Shared test fixtures need mass updates** — when test files share a helper like `_make_test_df`, adding a new required column or changing a constant means updating every helper. Grep the fixtures after every field/constant addition.
-
-### Cross-task / phasing
-
-13. **Task dependency chain documented, not implicit** — if card B depends on card A's output (columns, constants, config keys), the dependency must be in card B's body in `tasks/`, not memory-only. Otherwise a future session ships B without A.
-
-### Measurement-system validity
-
-14. **Evaluation-system validity** — the prompt v2.2 metrics (acceptance rate, agreement rate) are the decision-making measurements for this project. When a falsifier claims "metric X improves by Y%", BEAT 1 must verify: is the test harness scoring the same thing production runs? Is the sample representative? Red-flag heuristic: wins >= 20% on a mature metric are suspicious. Full rule: [[feedback_measurement_validity_first]].
+9. **Data-driven, not copy-pasted per day** — the 5 days are one config array rendered by one
+   renderer + one state machine. Check: no per-day duplicated branch that can drift when one
+   day's password/symbol/position changes.
+10. **Naming collisions / clarity** — a local variable colliding with a config field name or a
+    DOM `id`. When ambiguous, rename or comment the distinction.
+11. **Premature abstraction** — YAGNI. Config keys, flags, or helpers for features not yet
+    built (sound layer, later phases) are dead weight until they have a consumer. Flag stubs
+    with no caller in shipped code.
 
 ### Boundary / robustness
 
-15. **Boundary / zero / empty / null input safety** — for any modified function, walk the boundary inputs: empty string, `"nan"` as text, `None`, NaN (pandas), single-row DataFrame, question with no assessment type prefix, answer with trailing whitespace. For each, identify the safety net (guard / default / fallback) by file:line, or confirm the existing one still catches it. The point is to *prove* the boundary case is covered, not assert it.
+12. **Boundary / empty / null / missing-element safety** — for any modified function, walk the
+    boundary inputs: `getElementById` returning `null` (id typo / element on the other screen),
+    an asset that fails to load (`onerror`), empty password field, refresh mid-animation, rapid
+    double-click on unlock. For each, name the safety net (guard / default / disabled button) by
+    file:line, or prove the existing one still catches it.
+
+### Cross-task / phasing
+
+13. **Phase dependency documented, not implicit** — if a later phase depends on this phase's
+    output (the config shape, the state-machine states, the `localStorage` keys), that
+    dependency belongs in the `tasks/` card body, not memory-only, so a future session doesn't
+    ship the dependent phase against a changed contract.
+14. **Single-sourced facts** — a fact that lives in two places drifts. Passwords, the chest code
+    `13177`, the day↔symbol↔digit mapping, and stop positions must each have ONE home; when a
+    value changes, grep every occurrence and update together.
 
 ---
 

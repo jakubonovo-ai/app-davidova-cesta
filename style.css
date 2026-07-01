@@ -1,0 +1,167 @@
+/* =========================================================================
+   Dávidova cesta — štýly (Fáza 1: kostra INTRO + MAPA, bez logiky hesla)
+   Pravidlá: offline (file://), 16:9 javisko na stenu, vysoký kontrast.
+   ========================================================================= */
+
+/* --- Základ stránky: čierne okolie okolo javiska (letterbox pri inom pomere okna) --- */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+body {
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;                 /* žiadne posúvanie — je to projekcia */
+  font-family: Georgia, "Times New Roman", serif;   /* dočasne; ozdobný font rieši neskoršia fáza */
+}
+
+/* --- 16:9 javisko: čo najväčšie v okne, ale vždy presný pomer 16:9 --- */
+.stage {
+  position: relative;
+  width: min(100vw, calc(100vh * 16 / 9));   /* šírka obmedzená výškou okna */
+  aspect-ratio: 16 / 9;                       /* výška sa dopočíta → vždy 16:9 */
+  overflow: hidden;
+  background: #000;
+  user-select: none;
+}
+
+/* --- Obrazovky: prekrývajú sa cez celé javisko; prepína ich app.js triedou .skryta --- */
+.obrazovka {
+  position: absolute;
+  inset: 0;
+}
+.skryta {
+  display: none;
+}
+
+/* Pozadie obrazovky (INTRO / MAPA). Obrázok je presne 16:9 → fill neskresľuje. */
+.pozadie {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  display: block;
+}
+
+/* --- Prístupnosť: skrytý text len pre čítačky --- */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* =========================================================================
+   INTRO — priehľadná klikacia zóna nad zapečeným tlačidlom „ZAČAŤ"
+   Súradnice v % javiska; doladené voči INTRO.png (tlačidlo v strede, pod titulom).
+   ========================================================================= */
+.klik-zona {
+  position: absolute;
+  left: 50%;
+  top: 66%;
+  transform: translate(-50%, -50%);
+  width: 22%;
+  height: 10%;
+  padding: 0;
+  border: 0;
+  background: transparent;          /* neviditeľné — tlačidlo je súčasťou obrázka */
+  cursor: pointer;
+  border-radius: 12px;
+  transition: background-color .15s ease;
+}
+/* Jemný náznak, že sa dá kliknúť (pomôcka pre vedúceho na projektore) */
+.klik-zona:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+.klik-zona:focus-visible {
+  outline: 3px solid rgba(255, 255, 255, 0.7);
+  outline-offset: 2px;
+}
+
+/* =========================================================================
+   MAPA — zastávky (5 bodov). Tri vizuálne stavy:
+     .stav-uzamknuta  → hmla + neutrálny zámok, symbol NIE je v DOM (BR-003)
+     .stav-aktivna    → pulzujúci marker, bez symbolu
+     .stav-dokoncena  → odhalený symbol
+   ========================================================================= */
+.zastavky {
+  position: absolute;
+  inset: 0;
+}
+
+.zastavka {
+  position: absolute;
+  transform: translate(-50%, -50%);   /* left/top = STRED bodu */
+  width: 8%;
+  aspect-ratio: 1 / 1;                 /* kruh nezávisle od pomeru javiska */
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+/* --- Dokončená: odhalený symbol v zlato orámovanom kruhu so žiarou --- */
+.stav-dokoncena {
+  background: rgba(255, 244, 214, 0.12);
+  border: 3px solid rgba(214, 173, 95, 0.9);
+  box-shadow: 0 0 18px 4px rgba(214, 173, 95, 0.45);
+}
+.stav-dokoncena .symbol {
+  width: 86%;
+  height: 86%;
+  object-fit: cover;
+  border-radius: 50%;                 /* oreže prípadné pozadie symbolu do kruhu */
+  display: block;
+}
+
+/* --- Aktívna: pulzujúci zlatý bod + krúžok, žiadny symbol (žiadny spoiler) --- */
+.stav-aktivna {
+  background: rgba(255, 244, 214, 0.10);
+  border: 3px solid rgba(214, 173, 95, 0.9);
+}
+.stav-aktivna .marker {
+  width: 34%;
+  height: 34%;
+  border-radius: 50%;
+  background: #f0c860;
+  box-shadow: 0 0 12px 3px rgba(240, 200, 96, 0.8);
+}
+/* Pulzujúci krúžok okolo aktívnej zastávky */
+.stav-aktivna::after {
+  content: "";
+  position: absolute;
+  inset: -6%;
+  border-radius: 50%;
+  border: 3px solid rgba(240, 200, 96, 0.8);
+  animation: puls 1.8s ease-out infinite;
+}
+@keyframes puls {
+  0%   { transform: scale(0.85); opacity: 0.9; }
+  100% { transform: scale(1.6);  opacity: 0;   }
+}
+
+/* --- Uzamknutá: mliečna hmla + neutrálny zámok. Symbol sa NEVYKRESLÍ (BR-003) --- */
+.stav-uzamknuta {
+  background:
+    radial-gradient(circle,
+      rgba(228, 224, 214, 0.85) 40%,
+      rgba(228, 224, 214, 0.35) 75%,
+      rgba(228, 224, 214, 0.0) 100%);
+  border: 2px solid rgba(120, 120, 120, 0.35);
+}
+.stav-uzamknuta .zamok {
+  width: 42%;
+  height: 42%;
+  color: #6b6b6b;                     /* neutrálna šedá — žiadna narážka na obsah */
+  display: grid;
+  place-items: center;
+}
+.stav-uzamknuta .zamok svg {
+  width: 100%;
+  height: 100%;
+}
