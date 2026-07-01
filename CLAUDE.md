@@ -32,6 +32,15 @@ for current state is `memory/STATUS.md`.
 
 ---
 
+## Jazyk — všetko po slovensky
+
+- Celý text aplikácie (nadpisy, heslá, správy) je v **odbornej slovenčine s diakritikou**.
+- Komunikácia s Jakubom po slovensky. V kóde: identifikátory (názvy premenných/funkcií) môžu
+  ostať po anglicky (konvencia); UI text, komentáre a dokumentácia po slovensky.
+- Jediný platný spec je slovenský `BRS_fixed.docx` (staršia anglická verzia bola zmazaná).
+
+---
+
 ## The stack (this project OVERRIDES the global Python default)
 
 - **Plain static HTML + CSS + JavaScript.** No server, no database, no build step,
@@ -49,8 +58,7 @@ for current state is `memory/STATUS.md`.
 
 | Topic | File |
 |---|---|
-| Business requirements (WHAT to build) — Slovak, primary | `BRS_fixed.docx` |
-| Business requirements (WHAT to build) — English summary | `DavidovaCesta_Enterprise_BRS_v1.0.docx` |
+| Business requirements (WHAT to build) — jediný platný spec (po slovensky) | `BRS_fixed.docx` |
 | Image assets (map, locations, locks, symbols, seal) | `app_images/` |
 | Current-state facts (phase grid, what's built) | `memory/STATUS.md` |
 | Topic-memory index (feedback/project/reference/user) | `memory/INDEX.md` |

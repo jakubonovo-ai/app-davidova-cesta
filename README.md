@@ -17,8 +17,7 @@ Plain static **HTML + CSS + JavaScript**. Progress is saved in the browser's
 - **Online:** via GitHub Pages (for distribution/testing only).
 
 > The app is **not built yet** — `index.html` is a placeholder. Build follows the
-> planning session. Requirements: `BRS_fixed.docx` (Slovak, primary) and
-> `DavidovaCesta_Enterprise_BRS_v1.0.docx` (English summary).
+> planning session. Requirement: `BRS_fixed.docx` (Slovak — the single source of truth).
 
 ## Working practice
 This repo uses a lean adaptation of an agentic starter kit: see `CLAUDE.md` for the

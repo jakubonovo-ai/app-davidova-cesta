@@ -20,8 +20,9 @@ Four buckets. Add a one-line pointer per file under its bucket.
 - _(none yet)_
 
 ### Project context  (`project_*.md` — ongoing work, goals, constraints not in code/git)
-- _(none yet — likely candidates after planning: `project_build_plan.md`,
-  `project_camp_schedule.md`)_
+- [project_build_plan.md](project_build_plan.md) — HOW plán stavby: rozhodnutia, obsah 5 dní,
+  15 obrazoviek, overený register assetov, pozície zastávok, fázy 0–8, technické gotchas.
+- _(budúci kandidát: `project_camp_schedule.md`)_
 
 ### Reference data  (`reference_*.md` — pointers to canon, external resources)
 - _(none yet — the BRS `.docx` files are the canonical spec; see CLAUDE.md table)_
@@ -51,6 +52,5 @@ On every non-trivial task:
 ---
 
 ## Project docs (canonical paths)
-- `BRS_fixed.docx` (Slovak, primary spec) · `DavidovaCesta_Enterprise_BRS_v1.0.docx`
-  (English summary) · `app_images/` (assets). Mirror of the CLAUDE.md "Where to
-  find more" table.
+- `BRS_fixed.docx` (Slovak — jediný platný spec) · `app_images/` (assets). Mirror of
+  the CLAUDE.md "Where to find more" table.

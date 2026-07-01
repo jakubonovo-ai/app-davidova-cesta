@@ -20,5 +20,7 @@ a store — detail lives in STATUS.md and session notes. One line per session in
 ## Last session
 _Newest first. ONE line per session: outcome headline + (resume: next action) if paused._
 
+- **S2 (2026-07-01)** — Plánovanie + audit assetov + prechod na slovenčinu; plán v
+  `memory/project_build_plan.md`. App kód zatiaľ nie (resume: Fáza 1 — kostra INTRO+MAPA).
 - **S1 (2026-07-01)** — Set up agentic starter kit (lean adapted spine) + public
   GitHub repo + Pages. App not built yet (resume: planning session).

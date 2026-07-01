@@ -3,14 +3,16 @@ _The ONE task this session is doing, plus the ordered next-pick queue. Read on
 bootstrap. NOT a history log — shipped cards leave here entirely._
 
 ## NOW
-No active task yet. **Next up: the planning session** — turn the BRS into a
-concrete, simple build plan for the offline HTML/JS app (screens, state model,
-assets mapping, one-unlock-per-day logic, localStorage shape).
+**Fáza 1 — kostra appky** (po potvrdení): `index.html` + `style.css` + `app.js`; INTRO
+(obr.1) s klikacou zónou ZAČAŤ + MAPA (obr.2, prázdna `MAPA.jfif`) s 5 pozíciami zastávok;
+vizuál stavov (hmla+zámok / aktívny marker / dokončený symbol) — zatiaľ BEZ logiky hesla.
+Detaily a rozhodnutia: `memory/project_build_plan.md`.
 
 ## NEXT (ordered next-pick queue)
-1. Planning session — agree the screen list + state model + file layout.
-2. Build the map + intro screen (static, no logic).
-3. Add the 5 locations with sequential lock/unlock + password entry.
+1. Fáza 1 — kostra (INTRO + MAPA, bez logiky).
+2. Fáza 2 — stavový model + localStorage + 1 odomknutie.
+3. Fáza 3 — pergameny (clue + heslo + nesprávne) + obsah 5 dní.
 
 ## Recently shipped
+- Plánovacia relácia + plán stavby + Fáza 0 audit assetov; slovenčina; zmazaný starý BRS — S2.
 - Agentic starter kit installed (lean adapted spine) — S1.
