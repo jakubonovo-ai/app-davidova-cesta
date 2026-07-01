@@ -46,8 +46,8 @@ one Read call ingests it (move old detail to session notes when it grows)._
   offline, so plan to also hand the leader the files to open `index.html` directly.
   Confirm in planning.
 - Whether to keep large binary assets (`app_images/`) in git or manage separately.
-- **Chýba (od Janky/produkcia):** zvuk (mp3), historický font so SK diakritikou, „táborový
-  denníček" (referencia štýlu, DOD-3).
+- **Chýba (od Janky/produkcia):** zvuk (mp3), „táborový denníček" (referencia štýlu, DOD-3).
+  Font: štýl z `INTRO.png` (Janka, S2) — nájdem voľný ekvivalent so SK diakritikou.
 - Verejný repo = heslá budú viditeľné → nechať public alebo dať private?
 - Mapa rozhodnutá: **prázdna `MAPA.jfif`** + postupné odhaľovanie (nie popísaná „ChatGPT" mapa).
 

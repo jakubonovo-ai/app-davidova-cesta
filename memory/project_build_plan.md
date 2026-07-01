@@ -20,6 +20,10 @@ postupne (1/deň), stav v `localStorage`, musí bežať offline. Simplicita, spo
 - **Bez dátumovej brány** (vyžadujú to testy TS-001 a generálka TS-007 — prehrajú 5 naraz).
 - **Zvuk:** neskorší voliteľný layer, tichý fallback, štart pri prvom kliku (autoplay policy).
 - **Projektor:** stage 16:9, hlavné texty ≥48px, vysoký kontrast; pomery strán podľa obrazovky.
+- **Font:** použiť **štýl fontu z `INTRO.png`** (ozdobný serif) — Janka, S2. Z obrázka sa presný
+  font nedá vytiahnuť → nájdem voľne šíriteľný ekvivalent so slovenskou diakritikou, zabalený
+  offline; vzorku ukázať Jakubovi pred zafixovaním. (Titulky sú v INTRO zapečené → font treba
+  hlavne pre pole hesla, tlačidlá, správy, clue slová, „13177".)
 
 ## Obsah 5 dní (BRS sekcia 7)
 | Deň | Lokácia | Heslo | Clue na pergamene | Číslica |
@@ -57,14 +61,14 @@ Kód truhlice: **13177** (zoradené D1→D5: ovca 1, prak 3, luk 1, jaskyňa 7, 
 | LOCK_* (5×) | — | ❌ NEPOUŽIŤ — odhaľujú symbol (proti BR-003) |
 | 3× „ChatGPT Image…" | podklady | ⚠️ mapa=referencia; dok+storyboard = mimo app_images |
 
-**Chýba (od Janky/produkcia):** zvuk (mp3), historický font so SK diakritikou, „táborový denníček" (štýl, DOD-3).
+**Chýba (od Janky/produkcia):** zvuk (mp3), „táborový denníček" (štýl, DOD-3). Font: štýl z `INTRO.png` (Janka) — nájdem voľný ekvivalent so SK diakritikou.
 
 ## Pozície zastávok (referencia z „ChatGPT" mapy — doladiť na MAPA.jfif vo Fáze 1)
 1 Pastier vľavo dole · 2 Prak dole-stred · 3 Jonatán hore-stred · 4 Jaskyňa vpravo-stred ·
 5 Jeruzalem vpravo hore. Presné % podľa reálnej MAPA.jfif.
 
 ## Otvorené otázky
-- Zvuk (mp3) — kto/kedy vyrobí. · Font so SK diakritikou (offline). · „Denníček" (štýl).
+- Zvuk (mp3) — kto/kedy vyrobí. · „Denníček" (štýl).
 - Koruna pre D5 (v symbole nie je; je v SIFRA medailóne). · INTRO titul ≠ BRS — použiť ako-je?
 - Verejný repo = heslá viditeľné → public/private? · KRIK obrazovka (OQ-004).
 - Hygiena assetov: medzery v názvoch, veľké PNG, prevod `.jfif`→`.png` — dotýka sa `app_images/` (len s potvrdením).

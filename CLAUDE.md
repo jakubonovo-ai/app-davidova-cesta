@@ -23,7 +23,8 @@ offline first.**
 **Owner / developer:** Jakub (beginner developer — see global `~/.claude/CLAUDE.md`).
 **Product Owner (content):** Janka. **Primary user:** the camp leader.
 **Repository:** Git with a **GitHub remote + GitHub Pages** deployment. Commit
-locally; push to `main` (Jakub approves pushes). Pages is for distribution/testing —
+locally; push to `main` (Jakub approves pushes). **Push na GitHub aj session
+journal robíme až na KONCI, keď bude appka hotová** — dovtedy len lokálne commity, ktoré robím **rovno, bez pýtania `CONFIRM`**. Pages is for distribution/testing —
 **the app must still run fully offline** (open `index.html` directly, no internet).
 
 **Current state:** Pre-build. The BRS is written; the app is **not yet built**. A
