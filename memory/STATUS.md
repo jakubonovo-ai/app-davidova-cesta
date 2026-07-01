@@ -59,8 +59,9 @@ one Read call ingests it (move old detail to session notes when it grows)._
   Font: štýl z `INTRO.png` (Janka, S2) — nájdem voľný ekvivalent so SK diakritikou.
 - Verejný repo = heslá budú viditeľné → nechať public alebo dať private?
 - Mapa rozhodnutá: **prázdna `MAPA.jfif`** + postupné odhaľovanie (nie popísaná „ChatGPT" mapa).
-- **Heslo D1 zmenené** (S3) na „Hospodin hľadí na tvoje srdce" — **BRS + Janka:** over súhlas a nové
-  clue slová pre D1 (Fáza 3). Zmena je zatiaľ len v `app.js` + `project_build_plan.md`, nie v BRS.
+- **Heslo D1** „Hospodin hľadí na tvoje srdce" — **odsúhlasené Jankou (S3, 2026-07-01).** Zmena je
+  v `app.js` + `project_build_plan.md`; `BRS_fixed.docx` má ešte staré heslo (appka je autoritatívna).
+  **Otvorené:** nové clue slová pre D1 (Fáza 3), staré „BOH, VIDÍ, TVOJE, SRDCE" už nesedia.
 - **Pozície zastávok / veľkosť textu** — zatiaľ orientačné (cqw), doladiť v prehliadači keď bude čas.
 
 ## Critical rules (not derivable from code)
