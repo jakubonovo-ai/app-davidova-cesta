@@ -4,6 +4,20 @@ one Read call ingests it (move old detail to session notes when it grows)._
 
 ## Recent sessions (rolling window)
 
+- **S6 (2026-07-02)** — **Fáza 5 (D5 finálna sekvencia, obr.10–15).** Po odomknutí Jeruzalema (D5) sa
+  namiesto štandardného návratu na mapu spustí finále: obr.10 **finálna mapa** (svetelná vlna — dokončené
+  zastávky sa postupne rozžiaria D1→D5 cez `--poradie`) → obr.11 **záverečná** (Jeruzalem v zlate + „Dávidova
+  cesta sa skončila…" / „Ale tvoja cesta s Bohom pokračuje.") → obr.12 **PREKVAPENIE** (kamenný TOTEM s „?",
+  klik naň) → obr.13 **šifra** (SIFRA pergamen, Ďalej) → obr.14 **kód 13177** (objaví sa V šifrovej obrazovke —
+  pergamen len stmavne, `.sifra-stlmena`; žiadny presvit mapy) → obr.15 **truhlica** (koniec, obrazovka ostáva).
+  **Klik na dokončený Jeruzalem prehrá finále znova** (Jakub S6 — poistka pri prerušení; `stopPropagation` proti
+  bublaniu na mapu). **`koniecVideny=true`** sa uloží pri zobrazení truhlice (dovtedy nevyužité pole). Escape
+  finále ukončí (mapa ostáva), reset ho zruší aj s časovačmi (`zavriFinale`). **Nový automat** `finaleFaza` +
+  `finaleCasovace` (lineárny, dátami neriadený — 6 krokov). **TOTEM/SIFRA/TRUHLICA** prevedené z `.jfif` na
+  **priehľadné PNG** (šachovnica zapečená v JPEG odstránená flood-fillom + čistením osamelých pixelov; `.jfif`
+  originály nedotknuté). Cold review (15 kat.): **0 FOUND**, 2 FOUND-UNCERTAIN → oba vyriešené (onerror =
+  parkované Fáza 7 ako všade; 13177 single-source v `KOD_TRUHLICE` overené). Odstránený dvojitý render mapy
+  po D5. Otestované v prehliadači (Jakub): tok OK, totem čistý, prechod na kód plynulý.
 - **S5 (2026-07-01)** — **Fáza 4 (odhalenie symbolu po odomknutí).** Po správnom hesle: obr.6
   pergamen ukáže `ODOMKNUTIE.png` (odopnutý zámok, 1,5 s) → obr.7 zámok zmizne (pozadie späť na
   `pregamen.png`) + na pergamene sa objaví **symbol dňa + jeho názov** (4 s, jemný fade) → zavrie
@@ -50,7 +64,9 @@ one Read call ingests it (move old detail to session notes when it grows)._
 - ✅ Fáza 2 — stavový model + `localStorage` + odomknutie heslom + reset (menu)
 - ✅ Fáza 3 — pergameny (clue + heslo + nesprávne) + obsah 5 dní (S4)
 - ✅ Fáza 4 — odhalenie symbolu po odomknutí (zámok → symbol+názov na pergamene, prerušiteľné) (S5)
-- ⬜ Fáza 5 — D5 špeciál (finálna mapa, TOTEM, SIFRA, 13177, truhlica) — NEXT
+- ✅ Fáza 5 — D5 finálna sekvencia (finálna mapa + záverečná + TOTEM + SIFRA + 13177 + truhlica) (S6)
+- ⬜ Fáza 6 — zvuk (mp3 + tichý fallback) — NEXT
+- ⬜ Fáza 7 — polish (edge cases; napr. `onerror` fallback pre `<img>`)
 - ⬜ Offline verification (open index.html with no internet)
 - ⬜ Camp-ready hand-off to the leader
 
@@ -59,11 +75,11 @@ one Read call ingests it (move old detail to session notes when it grows)._
 - Stack: static HTML/CSS/JS, offline-first, progress in `localStorage`. No server,
   no DB, no network, no secrets.
 - Tests: none yet.
-- Assets present: `app_images/` (mapa, 5 symbolov — všetky priehľadné PNG od S5, TOTEM=obr.12,
-  SIFRA=obr.13, pergamen, pečať, svetlo, truhlica; „LOCK_*" sa NEpoužijú — odhaľujú symbol). BRS:
-  jediný spec `BRS_fixed.docx` (zastaraný anglický zmazaný). Audit: viď `memory/project_build_plan.md`.
-  Symboly D1/D3/D5 boli JPEG(.jfif) s bielym pozadím → S5 zmazané, nahradené priehľadnými `.png`
-  (pozadie odstránené skriptom Pillow; zálohy .jfif originálov len v git histórii pred S5).
+- Assets present: `app_images/` (mapa, 5 symbolov — všetky priehľadné PNG od S5; finále: `TOTEM.png`=obr.12,
+  `SIFRA.png`=obr.13, `TRUHLICA.png`=obr.15 — všetky priehľadné PNG od S6; pergamen, pečať, svetlo, ODOMKNUTIE;
+  „LOCK_*" sa NEpoužijú — odhaľujú symbol). BRS: jediný spec `BRS_fixed.docx`. Audit: viď `project_build_plan.md`.
+  Symboly D1/D3/D5 (S5) aj TOTEM/SIFRA/TRUHLICA (S6) boli JPEG(.jfif) so zapečeným pozadím → nahradené
+  priehľadnými `.png` (skript Pillow flood-fill + čistenie); pôvodné `.jfif` v app_images/ ostávajú (nedotknuté).
 - Environment on this machine: Python is `py` (bare `python` is the broken Store
   stub); **Node is NOT installed**; `gh` CLI 2.95.0 installed at
   `C:\Program Files\GitHub CLI\gh.exe`, authed as **jakubonovo-ai**.
