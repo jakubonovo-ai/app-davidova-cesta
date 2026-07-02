@@ -457,7 +457,7 @@ var finaleFaza = null;
 var finaleCasovace = [];
 
 var FINALE_OBALY = ["finale-zaverecna", "finale-mystery", "finale-sifra",
-                    "finale-kod", "finale-truhlica"];
+                    "finale-truhlica"];
 
 /** Zruší naplánované automatické prechody finále. */
 function zrusFinaleCasovace() {
@@ -524,16 +524,23 @@ function ukazSifru() {
   finaleFaza = "sifra";
   skryFinaleObaly();
   document.getElementById("sifra-obr").src = FINALE_OBRAZKY.sifra;
+  // Pri (opätovnom) vstupe do šifry: kód skrytý, pergamen v plnom jase, tlačidlo Ďalej späť.
+  document.getElementById("kod-blok").classList.add("skryta");
+  document.getElementById("sifra-obr").classList.remove("sifra-stlmena");
+  document.getElementById("sifra-dalej").classList.remove("skryta");
   document.getElementById("finale-sifra").classList.remove("skryta");
 }
 
-/** Obr.14 — potvrdenie kódu 13177 nad stlmeným pergamenom. */
+/**
+ * Obr.14 — potvrdenie kódu 13177. Pergamen (obr.13) NEZMIZNE — len sa stlmí a kód
+ * sa naň prekryje v tej istej obrazovke → plynulý prechod bez presvitu mapy (S6).
+ */
 function ukazKod() {
   finaleFaza = "kod";
-  skryFinaleObaly();
-  document.getElementById("kod-pozadie").src = FINALE_OBRAZKY.sifra;
+  document.getElementById("sifra-obr").classList.add("sifra-stlmena");   // pergamen do pozadia
+  document.getElementById("sifra-dalej").classList.add("skryta");        // jeho Ďalej nahradí Ďalej v kód-bloku
   document.getElementById("kod-cislo").textContent = KOD_TRUHLICE;
-  document.getElementById("finale-kod").classList.remove("skryta");
+  document.getElementById("kod-blok").classList.remove("skryta");
 }
 
 /** Obr.15 — otvorená truhlica: koniec aplikácie, obrazovka ostáva. */

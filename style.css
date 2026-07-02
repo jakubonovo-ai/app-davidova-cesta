@@ -521,13 +521,24 @@ body {
   margin-top: 1%;
 }
 
-/* Obr.14 — veľký kód nad stlmeným pergamenom v pozadí */
+/*
+  Obr.14 — kód sa objaví V šifrovej obrazovke: pergamen (obr.13) len stmavne (nezmizne)
+  a kód-blok sa naň prekryje absolútne. Prechod je plynulý (žiadny presvit mapy, S6).
+*/
+.sifra-obr {
+  transition: filter 0.5s ease;       /* jemné stmavnutie pergamenu pri objavení kódu */
+}
 .sifra-stlmena {
-  position: absolute;                 /* pergamen ostáva v pozadí (BRS), kód leží nad ním */
-  filter: brightness(0.3) blur(2px);
+  filter: brightness(0.28);
 }
 .kod-blok {
-  position: relative;                 /* nad stlmeným pozadím */
+  position: absolute;                 /* prekryv nad stlmeným pergamenom v tej istej obrazovke */
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: zjavenie 0.5s ease;      /* kód sa jemne objaví */
 }
 .kod-cislo {
   margin: 0;

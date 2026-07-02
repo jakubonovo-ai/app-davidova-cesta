@@ -123,17 +123,17 @@
       <p class="finale-podtext">Získaj niečo, čo ťa na tvojej ceste dobrodružstvom poteší.</p>
     </div>
 
-    <!-- Obr.13 PERGAMEN — SYMBOLY A ČÍSLICE (náhodné poradie); deti hádajú kód -->
+    <!--
+      Obr.13 PERGAMEN — SYMBOLY A ČÍSLICE (náhodné poradie); deti hádajú kód.
+      Obr.14 KÓD 13177 sa objaví V TEJ ISTEJ obrazovke — pergamen NEZMIZNE, len sa
+      naň prekryje kód. Žiadny prechod cez mapu → plynulé (Jakub, S6 pripomienka).
+    -->
     <div id="finale-sifra" class="finale-obal skryta">
       <img id="sifra-obr" class="sifra-obr" alt="Pergamen so symbolmi a číslicami" />
       <button id="sifra-dalej" class="tlacidlo tlacidlo-hlavne finale-dalej"
               type="button">Ďalej</button>
-    </div>
-
-    <!-- Obr.14 KÓD 13177 — potvrdenie pre deti; pergamen ostáva stlmený v pozadí -->
-    <div id="finale-kod" class="finale-obal skryta">
-      <img id="kod-pozadie" class="sifra-obr sifra-stlmena" alt="" />
-      <div class="kod-blok">
+      <!-- Kód 13177 (obr.14): skrytý, kým vedúci neklikne Ďalej. Prekryv nad pergamenom. -->
+      <div id="kod-blok" class="kod-blok skryta">
         <p id="kod-cislo" class="kod-cislo"></p>
         <p class="kod-popis">Kód od pokladu</p>
         <button id="kod-dalej" class="tlacidlo tlacidlo-hlavne" type="button">Ďalej</button>
