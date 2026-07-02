@@ -217,8 +217,11 @@ var STAV = {
   BRS uvádza „BOH VIDÍ TVOJE SRDCE" — appka používa „Hospodin hľadí na tvoje srdce".
 */
 var DNI = [
-  { id: "D1", nazov: "Pastier",   symbol: "app_images/PASTIER.png",  heslo: "Hospodin hľadí na tvoje srdce", x: 11, y: 70,
+  { id: "D1", nazov: "Pastier",   symbol: "app_images/PASTIER_chlapec.png",  heslo: "Hospodin hľadí na tvoje srdce", x: 8, y: 73,
     zvuk: "birds",
+    // Pastier: orezaný výrez len chlapca + ovečky pri pravej nohe (PASTIER_chlapec.png, bez
+    // stromu a stáda), centrovaný v kruhu (contain). Zväčšený tak, aby postava pekne vyplnila kruh.
+    mapa: { velkost: "92%", fit: "contain", posunX: "6%", posunY: "-6%" },
     clue: [
       { text: "HOSPODIN", cx: 34, cy: 16 },
       { text: "TVOJE",    cx: 70, cy: 40 },
@@ -226,8 +229,11 @@ var DNI = [
       { text: "HĽADÍ",    cx: 66, cy: 60 },
       { text: "NA",       cx: 20, cy: 52 }
     ] },
-  { id: "D2", nazov: "Prak",      symbol: "app_images/PRAK.png",      heslo: "ODVAHA", x: 37, y: 54,
+  { id: "D2", nazov: "Prak",      symbol: "app_images/PRAK_blizko.png",      heslo: "ODVAHA", x: 37, y: 54,
     zvuk: "water",
+    // Prak+kamene: prekomponované, prak a kamene priložené tesne k sebe (PRAK_blizko.png,
+    // bez veľkej medzery) → väčšie a výraznejšie v kruhu. Contain, bez orezu, rámik ostáva.
+    mapa: { velkost: "82%", fit: "contain", orez: false },
     clue: [
       { text: "A", cx: 28, cy: 16 },
       { text: "H", cx: 68, cy: 22 },
@@ -236,8 +242,10 @@ var DNI = [
       { text: "D", cx: 78, cy: 58 },
       { text: "A", cx: 40, cy: 74 }
     ] },
-  { id: "D3", nazov: "Jonatán",   symbol: "app_images/JONATAN.png",  heslo: "PRIATEĽ MILUJE V KAŽDOM ČASE", x: 52, y: 30,
+  { id: "D3", nazov: "Jonatán",   symbol: "app_images/JONATAN_sat.png",  heslo: "PRIATEĽ MILUJE V KAŽDOM ČASE", x: 52, y: 30,
     zvuk: "leaves",
+    // Jonatán (strom s lukom a tulcom): sýtejšia/kontrastnejšia verzia — výraznejší voči mape.
+    mapa: { velkost: "96%", fit: "contain", orez: false },
     clue: [
       { text: "MILUJE",  cx: 30, cy: 18 },
       { text: "PRIATEĽ", cx: 62, cy: 40 },
@@ -245,8 +253,11 @@ var DNI = [
       { text: "ČASE",    cx: 72, cy: 64 },
       { text: "KAŽDOM",  cx: 40, cy: 74 }
     ] },
-  { id: "D4", nazov: "Jaskyňa",   symbol: "app_images/jask.png",      heslo: "JASKYŇA", x: 70, y: 60,
+  { id: "D4", nazov: "Jaskyňa",   symbol: "app_images/jask_sat.png",      heslo: "JASKYŇA", x: 70, y: 60,
     zvuk: "cave",
+    // Jaskyňa: sýtejšia/kontrastnejšia verzia (jask_sat.png) — výraznejšia voči pozadiu mapy.
+    // Bez orezu, čo najväčšia (od okraja ku kraju zlatého kruhu bez vytŕčania). Rámik ostáva.
+    mapa: { velkost: "96%", fit: "contain", orez: false },
     clue: [
       { text: "netopier",  cx: 32, cy: 16 },
       { text: "ozvena",    cx: 68, cy: 32 },
@@ -254,8 +265,10 @@ var DNI = [
       { text: "tma",       cx: 24, cy: 70 },
       { text: "zima",      cx: 72, cy: 74 }
     ] },
-  { id: "D5", nazov: "Jeruzalem", symbol: "app_images/JERUZALEM.png", heslo: "BOH MA VIEDOL CELÚ CESTU", x: 88, y: 22,
+  { id: "D5", nazov: "Jeruzalem", symbol: "app_images/JERUZALEM_sat.png", heslo: "BOH MA VIEDOL CELÚ CESTU", x: 88, y: 22,
     zvuk: "market",
+    // Jeruzalem: sýtejšia/kontrastnejšia verzia (JERUZALEM_sat.png) — výraznejší voči pozadiu mapy.
+    mapa: { velkost: "96%", fit: "contain", orez: false },
     clue: [
       { text: "VIEDOL", cx: 32, cy: 18 },
       { text: "BOH",    cx: 68, cy: 30 },
@@ -366,6 +379,21 @@ function vytvorMarker() {
 }
 
 /**
+ * Aplikuje voliteľné per-deň doladenie symbolu na mape cez CSS premenné.
+ * Bez `mapa` sa nič nenastaví → platí default z CSS (cover + kruh, veľkosť 86 %).
+ * @param {HTMLImageElement} img - element symbolu.
+ * @param {Object} [mapa] - { velkost, fit, orez, posunX, posunY } — všetky voliteľné.
+ */
+function nastavMapuSymbolu(img, mapa) {
+  if (!mapa) { return; }
+  if (mapa.velkost) { img.style.setProperty("--sym-velkost", mapa.velkost); }
+  if (mapa.fit)     { img.style.setProperty("--sym-fit", mapa.fit); }
+  if (mapa.orez === false) { img.style.setProperty("--sym-radius", "0"); }
+  if (mapa.posunX)  { img.style.setProperty("--sym-posun-x", mapa.posunX); }
+  if (mapa.posunY)  { img.style.setProperty("--sym-posun-y", mapa.posunY); }
+}
+
+/**
  * Vykreslí jednu zastávku podľa jej stavu.
  * Symbol/názov sa vloží IBA pri DOKONCENA (BR-003). Aktívna je klikateľná.
  * @param {Object} den - konfigurácia dňa.
@@ -385,6 +413,7 @@ function vytvorZastavku(den, stav, index) {
     img.className = "symbol";
     img.src = den.symbol;
     img.alt = den.nazov;                 // názov smie byť v DOM len po dokončení
+    nastavMapuSymbolu(img, den.mapa);    // voliteľné per-deň doladenie (veľkosť/orez/posun)
     el.appendChild(img);
     if (index === DNI.length - 1) {
       // Dokončený Jeruzalem = všetko odomknuté → klik prehrá finále znova.

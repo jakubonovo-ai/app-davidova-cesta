@@ -101,8 +101,11 @@ body {
 .zastavka {
   position: absolute;
   transform: translate(-50%, -50%);   /* left/top = STRED bodu */
-  width: 15%;                          /* zväčšené oproti pôvodným 8 % (S3) */
-  aspect-ratio: 1 / 1;                 /* kruh nezávisle od pomeru javiska */
+  /* Rozmer viazaný na ŠÍRKU javiska (cqw), nie na % rodiča — tak je bod vždy presný
+     kruh bez ohľadu na to, či je javisko roztiahnuté na výšku (aspect-ratio na % výšky
+     rodiča inak dá elipsu). 15cqw = 15 % šírky javiska; výška = tá istá miera. */
+  width: 15cqw;
+  height: 15cqw;
   border-radius: 50%;
   display: grid;
   place-items: center;
@@ -113,12 +116,22 @@ body {
   background: rgba(255, 244, 214, 0.12);
   border: 3px solid rgba(214, 173, 95, 0.9);
   box-shadow: 0 0 18px 4px rgba(214, 173, 95, 0.45);
+  overflow: hidden;                   /* kruh je maska — čo presahuje (zväčšený symbol) sa oreže */
 }
+/* Symbol na mape. Default = orez do kruhu (cover + border-radius) — vhodné pre
+   symboly s pozadím, ktoré majú pekne vyplniť zlatý kruh (D3, D5).
+   Per-deň sa dá prepísať cez inline premenné (app.js podľa DNI[].mapa):
+     --sym-velkost : veľkosť obrázka v % kruhu (default 86 %),
+     --sym-fit     : contain = celý obrázok bez orezu / cover = vyplní kruh,
+     --sym-radius  : 50 % = orez do kruhu / 0 = bez kruhového orezu,
+     --sym-posun-x : vodorovný posun (napr. 20% = doprava),
+     --sym-posun-y : zvislý posun (napr. -20% = vyššie, prekryje pozadie mapy). */
 .stav-dokoncena .symbol {
-  width: 86%;
-  height: 86%;
-  object-fit: cover;
-  border-radius: 50%;                 /* oreže prípadné pozadie symbolu do kruhu */
+  width: var(--sym-velkost, 86%);
+  height: var(--sym-velkost, 86%);
+  object-fit: var(--sym-fit, cover);
+  border-radius: var(--sym-radius, 50%);   /* oreže prípadné pozadie symbolu do kruhu */
+  transform: translate(var(--sym-posun-x, 0), var(--sym-posun-y, 0));
   display: block;
 }
 

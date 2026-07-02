@@ -4,6 +4,17 @@ one Read call ingests it (move old detail to session notes when it grows)._
 
 ## Recent sessions (rolling window)
 
+- **S9 (2026-07-02)** — **Vizuálne doladenie 5 symbolov na mape** (Jakub, prehliadač; iteratívne, mimo plánu —
+  NIE Fáza 7). Pridaná **per-deň mechanika `mapa`** v `DNI[]` (`velkost`/`fit`/`orez`/`posunX`/`posunY`) → prepisuje
+  vzhľad symbolu cez CSS premenné (`--sym-*`) novým helperom `nastavMapuSymbolu`; CSS default = staré správanie
+  (86 %/cover/kruh). **Oprava elipsy:** `.zastavka` z `width:15%+aspect-ratio:1/1` na `15cqw×15cqw` (rozmer viazaný
+  na šírku javiska → vždy presný kruh). **Kruh ako maska:** `overflow:hidden` na `.stav-dokoncena` (nie na `.zastavka`
+  → pulzujúci krúžok aktívnej NIE je orezaný; box-shadow žiara prežíva, kreslí sa mimo boxu). **Nové obrázky (Pillow,
+  originály nedotknuté):** `PASTIER_chlapec.png` (orezaný len chlapec+ovečka, bez stromu/stáda, centrovaný), `PRAK_blizko.png`
+  (prak+kamene prisunuté k sebe + sýtosť 1,40/kontrast 1,15), `JONATAN_sat.png`+`jask_sat.png` (sýtosť 1,30/kontrast 1,10),
+  `JERUZALEM_sat.png` (jemnejšie 1,15/1,06 — silnejšie pôsobilo digitálne). „Luk" v zadaní = D3 Jonatán (strom s lukom+tulcom).
+  Cold review (15 kat.): **0 reálnych defektov**, 1 kozmetika (kat.11: `orez` je jednohodnotový flag, `orez:true` sa nikde
+  nenastavuje — ponechané ako zámerne minimálne API). Otestované v prehliadači (Jakub): všetkých 5 symbolov OK.
 - **S8 (2026-07-02)** — **Fáza 6 (zvuk) — postavená a otestovaná** (Jakub, prehliadač; 3 dávky podľa jeho
   spätnej väzby). Zvukový modul v `app.js` (jediný domov hlasitostí `HLASITOSTI`, `spustiZvuk` jadro,
   `prehraj`/`spustiProstredie`/`zastavProstredie`/`stlmHarfu`/`prepniZvuk`). **Napojenie:** harfa `ambient`
@@ -103,7 +114,10 @@ one Read call ingests it (move old detail to session notes when it grows)._
   `tick` (loop tikanie šifry), `mystery` (prekvapenie + šifra). `wind` = zámerná NEnapojená rezerva.
   Generované cez ElevenLabs Sound Effects. Loop `ambient` overený OK (Jakub, S8). Hlasitosti vyvážené
   v `HLASITOSTI` (`app.js`). Pozn.: `cave`/whoosh boli slabé — riešiteľné len hlasnejším súborom (kód púšťa 1.0).
-- Assets present: `app_images/` (mapa, 5 symbolov — všetky priehľadné PNG od S5; finále: `TOTEM.png`=obr.12,
+- Assets present: `app_images/` — **5 symbolov mapy má od S9 nové vizuálne verzie** (staré originály ponechané, nedotknuté):
+  D1 `PASTIER_chlapec.png` (orezaný chlapec+ovečka), D2 `PRAK_blizko.png` (prekomponovaný+sýtejší), D3 `JONATAN_sat.png`,
+  D4 `jask_sat.png`, D5 `JERUZALEM_sat.png` (sýtejšie). Napojené v `DNI[]` (single-source; `JERUZALEM_sat` sa cez
+  `DNI[last].symbol` prejaví aj vo finálnej záverečnej obrazovke). Ďalej: (mapa, finále: `TOTEM.png`=obr.12,
   `SIFRA.png`=obr.13, `TRUHLICA.png`=obr.15 — všetky priehľadné PNG od S6; pergamen, pečať, svetlo, ODOMKNUTIE;
   „LOCK_*" sa NEpoužijú — odhaľujú symbol). BRS: jediný spec `BRS_fixed.docx`. Audit: viď `project_build_plan.md`.
   Symboly D1/D3/D5 (S5) aj TOTEM/SIFRA/TRUHLICA (S6) boli JPEG(.jfif) so zapečeným pozadím → nahradené
