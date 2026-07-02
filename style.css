@@ -419,3 +419,137 @@ body {
 .tlacidlo:hover {
   filter: brightness(1.12);
 }
+
+/* =========================================================================
+   Fáza 5 — D5 finálna sekvencia (obr.10–15)
+   ========================================================================= */
+
+/*
+  Obr.10 — svetelná vlna na finálnej mape: dokončené zastávky sa postupne rozžiaria
+  D1→D5 (aproximácia „vlny po celej ceste"; žiara samotnej cesty je až Fáza 7).
+  --poradie nastavuje app.js na každej zastávke (index dňa) → oneskorenie záblesku.
+*/
+.vlna .stav-dokoncena {
+  animation: zablysk 1.4s ease both;
+  animation-delay: calc(var(--poradie, 0) * 0.55s);
+}
+@keyframes zablysk {
+  0%, 100% { box-shadow: 0 0 18px 4px rgba(214, 173, 95, 0.45); }
+  50%      { box-shadow: 0 0 5cqw 2.2cqw rgba(255, 226, 140, 0.95); }
+}
+
+/* Spoločný celoplošný obal finálnych obrazoviek — tmavý, s jemným nábehom. */
+.finale-obal {
+  position: absolute;
+  inset: 0;
+  z-index: 30;                        /* ako pergamen-obal; menu (40) ostáva dostupné */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: rgba(10, 6, 2, 0.86);
+  animation: zjavenie 0.8s ease;      /* reštartuje sa pri každom zobrazení (display none→flex) */
+}
+@keyframes zjavenie {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Obr.11 — záverečná: Jeruzalem v zlatom svetle, tichá atmosféra */
+#finale-zaverecna {
+  background: radial-gradient(ellipse at 50% 42%,
+    rgba(84, 58, 20, 0.94), rgba(8, 5, 2, 0.97) 72%);
+}
+.zaverecna-obr {
+  height: 42%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 2.5cqw rgba(240, 200, 96, 0.75));
+}
+.zaverecna-hlavny {
+  margin: 3% 0 0;
+  font-size: 4.4cqw;                  /* hlavný text čitateľný z diaľky (projektor) */
+  font-weight: 700;
+  color: #f3e6c4;
+  text-shadow: 0 0 1cqw rgba(240, 200, 96, 0.5);
+}
+.zaverecna-vedlajsi {
+  margin: 1% 0 0;
+  font-size: 2.8cqw;
+  color: rgba(243, 230, 196, 0.88);
+}
+
+/* Obr.12 — mystery circle: nadpis, klikací otáznik (TOTEM), podtext */
+.finale-nadpis {
+  margin: 0;
+  font-size: 5cqw;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f0c860;
+  text-shadow: 0 0 1.2cqw rgba(240, 200, 96, 0.55);
+}
+.mystery-totem {
+  height: 56%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.mystery-totem img {
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 0 1.8cqw rgba(240, 200, 96, 0.5));
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+.mystery-totem:hover img {
+  transform: scale(1.04);
+  filter: drop-shadow(0 0 2.6cqw rgba(240, 200, 96, 0.8));
+}
+.finale-podtext {
+  margin: 1.5% 0 0;
+  font-size: 2.6cqw;
+  color: #f3e6c4;
+}
+
+/* Obr.13 — pergamen so symbolmi a číslicami (SIFRA.png) + Ďalej */
+.sifra-obr {
+  height: 80%;
+  object-fit: contain;
+}
+.finale-dalej {
+  margin-top: 1%;
+}
+
+/* Obr.14 — veľký kód nad stlmeným pergamenom v pozadí */
+.sifra-stlmena {
+  position: absolute;                 /* pergamen ostáva v pozadí (BRS), kód leží nad ním */
+  filter: brightness(0.3) blur(2px);
+}
+.kod-blok {
+  position: relative;                 /* nad stlmeným pozadím */
+}
+.kod-cislo {
+  margin: 0;
+  font-size: 14cqw;                   /* výrazné, dobre čitateľné z diaľky */
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #f0c860;
+  text-shadow: 0 0 2.5cqw rgba(240, 200, 96, 0.7);
+}
+.kod-popis {
+  margin: 0 0 4%;
+  font-size: 3cqw;
+  color: #f3e6c4;
+}
+
+/* Obr.15 — otvorená truhlica: len obraz v zlatej žiare, žiadny text */
+#finale-truhlica {
+  background: radial-gradient(ellipse at 50% 55%,
+    rgba(70, 48, 16, 0.95), rgba(5, 3, 1, 0.98) 72%);
+}
+.truhlica-obr {
+  height: 80%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 3cqw rgba(240, 200, 96, 0.6));
+}

@@ -183,6 +183,7 @@ function vytvorZastavku(den, stav, index) {
   el.className = "zastavka stav-" + stav;
   el.style.left = den.x + "%";
   el.style.top = den.y + "%";
+  el.style.setProperty("--poradie", index);   // oneskorenie svetelnej vlny finále (D1→D5)
 
   if (stav === STAV.DOKONCENA) {
     var img = document.createElement("img");
@@ -190,6 +191,16 @@ function vytvorZastavku(den, stav, index) {
     img.src = den.symbol;
     img.alt = den.nazov;                 // názov smie byť v DOM len po dokončení
     el.appendChild(img);
+    if (index === DNI.length - 1) {
+      // Dokončený Jeruzalem = všetko odomknuté → klik prehrá finále znova.
+      // stopPropagation: ten istý klik by inak prebublal na mapu, ktorej handler
+      // vlny by čerstvo spustené finále hneď preskočil na záverečnú obrazovku.
+      el.classList.add("klikatelna");
+      el.addEventListener("click", function (e) {
+        e.stopPropagation();
+        spustiFinale();
+      });
+    }
   } else if (stav === STAV.AKTIVNA) {
     el.classList.add("klikatelna");
     el.appendChild(vytvorMarker());
@@ -412,10 +423,129 @@ function skusOdomknut() {
     ukazOdomknutie(den, function () {
       zavriHeslo();
       vykresliZastavky(stav);
+      if (stav.dokonceneDni === DNI.length) spustiFinale();   // D5 → finálna sekvencia
     });
   } else {
     nastavSpravu("Skúste ešte raz. Niektorá z indícií vám možno unikla.");
     zatrasPergamenom();
+  }
+}
+
+/* =========================================================================
+   Fáza 5 — D5 finálna sekvencia (obr.10–15)
+   Po odomknutí Jeruzalema: finálna mapa (svetelná vlna) → záverečná obrazovka →
+   mystery circle (klik na otáznik) → šifra (Ďalej) → kód 13177 (Ďalej) → truhlica.
+   Obrázky a kód sa do DOM vkladajú až tu (BR-003 — žiadny budúci obsah vopred).
+   Klik na dokončený Jeruzalem prehrá finále znova (poistka pri prerušení — Jakub S6).
+   ========================================================================= */
+
+var FINALE_OBRAZKY = {
+  totem: "app_images/TOTEM.png",
+  sifra: "app_images/SIFRA.png",
+  truhlica: "app_images/TRUHLICA.png"
+};
+var KOD_TRUHLICE = "13177";           // číslice symbolov D1→D5 (zdroj: project_build_plan.md)
+var TRVANIE_VLNY_MS = 4200;           // 5 zastávok × 0,55 s rozostup + dosvit poslednej
+var TRVANIE_ZAVERECNEJ_MS = 9000;     // čas na prečítanie záverečných textov
+
+/*
+  finaleFaza != null znamená „finále beží" (hodnota = aktuálna obrazovka).
+  Automatické prechody (mapa→záverečná→mystery) držia časovač v finaleCasovace,
+  aby ich klik (preskočenie) aj Escape/reset vedeli zrušiť bez „duchov".
+*/
+var finaleFaza = null;
+var finaleCasovace = [];
+
+var FINALE_OBALY = ["finale-zaverecna", "finale-mystery", "finale-sifra",
+                    "finale-kod", "finale-truhlica"];
+
+/** Zruší naplánované automatické prechody finále. */
+function zrusFinaleCasovace() {
+  for (var i = 0; i < finaleCasovace.length; i++) {
+    window.clearTimeout(finaleCasovace[i]);
+  }
+  finaleCasovace = [];
+}
+
+/** Skryje všetky finálne obrazovky (medzi krokmi aj pri ukončení). */
+function skryFinaleObaly() {
+  for (var i = 0; i < FINALE_OBALY.length; i++) {
+    document.getElementById(FINALE_OBALY[i]).classList.add("skryta");
+  }
+}
+
+/**
+ * Ukončí finále (Escape alebo reset) — zruší časovače, skryje obrazovky a nechá
+ * mapu. Finále sa dá kedykoľvek prehrať znova klikom na dokončený Jeruzalem.
+ */
+function zavriFinale() {
+  zrusFinaleCasovace();
+  finaleFaza = null;
+  skryFinaleObaly();
+  document.getElementById("zastavky").classList.remove("vlna");
+}
+
+/**
+ * Obr.10 — finálna mapa: všetkých 5 symbolov + svetelná vlna D1→D5.
+ * Spúšťa sa po odomknutí D5 aj klikom na dokončený Jeruzalem (replay).
+ */
+function spustiFinale() {
+  if (finaleFaza !== null) return;    // už beží — druhé spustenie by rozbilo časovače
+  finaleFaza = "mapa";
+  ukazObrazovku("obrazovka-mapa");
+  vykresliZastavky(nacitajStav());
+  document.getElementById("zastavky").classList.add("vlna");
+  finaleCasovace.push(window.setTimeout(ukazZaverecnu, TRVANIE_VLNY_MS));
+}
+
+/** Obr.11 — záverečná obrazovka (Jeruzalem v zlatom svetle + texty). */
+function ukazZaverecnu() {
+  zrusFinaleCasovace();
+  document.getElementById("zastavky").classList.remove("vlna");
+  finaleFaza = "zaverecna";
+  skryFinaleObaly();
+  // Jeruzalem je v tejto chvíli vždy odomknutý — symbol už nie je spoiler
+  document.getElementById("zaverecna-obr").src = DNI[DNI.length - 1].symbol;
+  document.getElementById("finale-zaverecna").classList.remove("skryta");
+  finaleCasovace.push(window.setTimeout(ukazMystery, TRVANIE_ZAVERECNEJ_MS));
+}
+
+/** Obr.12 — mystery circle: čaká na klik vedúceho na otáznik (žiadny časovač). */
+function ukazMystery() {
+  zrusFinaleCasovace();
+  finaleFaza = "mystery";
+  skryFinaleObaly();
+  document.getElementById("mystery-obr").src = FINALE_OBRAZKY.totem;
+  document.getElementById("finale-mystery").classList.remove("skryta");
+}
+
+/** Obr.13 — pergamen so symbolmi a číslicami (deti hádajú poradie). */
+function ukazSifru() {
+  finaleFaza = "sifra";
+  skryFinaleObaly();
+  document.getElementById("sifra-obr").src = FINALE_OBRAZKY.sifra;
+  document.getElementById("finale-sifra").classList.remove("skryta");
+}
+
+/** Obr.14 — potvrdenie kódu 13177 nad stlmeným pergamenom. */
+function ukazKod() {
+  finaleFaza = "kod";
+  skryFinaleObaly();
+  document.getElementById("kod-pozadie").src = FINALE_OBRAZKY.sifra;
+  document.getElementById("kod-cislo").textContent = KOD_TRUHLICE;
+  document.getElementById("finale-kod").classList.remove("skryta");
+}
+
+/** Obr.15 — otvorená truhlica: koniec aplikácie, obrazovka ostáva. */
+function ukazTruhlicu() {
+  finaleFaza = "truhlica";
+  skryFinaleObaly();
+  document.getElementById("truhlica-obr").src = FINALE_OBRAZKY.truhlica;
+  document.getElementById("finale-truhlica").classList.remove("skryta");
+  var stav = nacitajStav();
+  if (!stav.koniecVideny) {
+    stav.koniecVideny = true;         // finále dopozerané až po truhlicu
+    ulozStav(stav);
   }
 }
 
@@ -442,6 +572,7 @@ function vynulujPostup() {
   zavriMenu();
   if (!window.confirm("Naozaj vynulovať celý postup? Appka sa vráti na začiatok.")) return;
   zavriHeslo();                 // zavrie pergamen + zruší bežiace odomknutie (žiadne prekreslenie starým stavom)
+  zavriFinale();                // ukončí prípadné bežiace finále (obrazovky + časovače)
   var stav = kopiaStavu(VYCHODZI_STAV);
   ulozStav(stav);
   vykresliZastavky(stav);
@@ -479,10 +610,22 @@ function start() {
     else if (e.key === "Escape") zavriHeslo();
   });
 
-  // Globálny Escape: počas odomknutia preskočí, inak zavrie otvorený clue pergamen.
+  // Finále: klik = ďalej (automatické kroky sa dajú preskočiť, ostatné vedie vedúci).
+  // Klik na mapu počas svetelnej vlny preskočí na záverečnú obrazovku.
+  document.getElementById("obrazovka-mapa").addEventListener("click", function () {
+    if (finaleFaza === "mapa") ukazZaverecnu();
+  });
+  document.getElementById("finale-zaverecna").addEventListener("click", ukazMystery);
+  document.getElementById("mystery-totem").addEventListener("click", ukazSifru);
+  document.getElementById("sifra-dalej").addEventListener("click", ukazKod);
+  document.getElementById("kod-dalej").addEventListener("click", ukazTruhlicu);
+
+  // Globálny Escape: počas odomknutia preskočí, počas finále ho ukončí (mapa ostáva;
+  // klik na dokončený Jeruzalem finále prehrá znova), inak zavrie otvorený pergamen.
   document.addEventListener("keydown", function (e) {
     if (e.key !== "Escape") return;
     if (sekvenciaHotovo) dokonciOdomknutie();
+    else if (finaleFaza !== null) zavriFinale();
     else if (aktivnyIndex !== null) zavriHeslo();
   });
 

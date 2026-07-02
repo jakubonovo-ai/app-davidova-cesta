@@ -100,6 +100,51 @@
       </div>
     </div>
 
+    <!--
+      Fáza 5 — D5 finálna sekvencia (obr.11–15). Obrázky a kód truhlice sa do DOM
+      vkladajú AŽ pri spustení finále v app.js (BR-003 — žiadny budúci obsah vopred).
+      Obr.10 (finálna mapa so svetelnou vlnou) nepotrebuje vlastný blok — je to mapa.
+    -->
+
+    <!-- Obr.11 ZÁVEREČNÁ OBRAZOVKA — Jeruzalem v zlatom svetle + záverečné texty -->
+    <div id="finale-zaverecna" class="finale-obal skryta">
+      <img id="zaverecna-obr" class="zaverecna-obr" alt="" />
+      <p class="zaverecna-hlavny">Dávidova cesta sa skončila…</p>
+      <p class="zaverecna-vedlajsi">Ale tvoja cesta s Bohom pokračuje.</p>
+    </div>
+
+    <!-- Obr.12 MYSTERY CIRCLE — kruh s otáznikom; vedúci naň klikne -->
+    <div id="finale-mystery" class="finale-obal skryta">
+      <p class="finale-nadpis">Prekvapenie</p>
+      <button id="mystery-totem" class="mystery-totem" type="button"
+              aria-label="Otvoriť prekvapenie">
+        <img id="mystery-obr" alt="" />
+      </button>
+      <p class="finale-podtext">Získaj niečo, čo ťa na tvojej ceste dobrodružstvom poteší.</p>
+    </div>
+
+    <!-- Obr.13 PERGAMEN — SYMBOLY A ČÍSLICE (náhodné poradie); deti hádajú kód -->
+    <div id="finale-sifra" class="finale-obal skryta">
+      <img id="sifra-obr" class="sifra-obr" alt="Pergamen so symbolmi a číslicami" />
+      <button id="sifra-dalej" class="tlacidlo tlacidlo-hlavne finale-dalej"
+              type="button">Ďalej</button>
+    </div>
+
+    <!-- Obr.14 KÓD 13177 — potvrdenie pre deti; pergamen ostáva stlmený v pozadí -->
+    <div id="finale-kod" class="finale-obal skryta">
+      <img id="kod-pozadie" class="sifra-obr sifra-stlmena" alt="" />
+      <div class="kod-blok">
+        <p id="kod-cislo" class="kod-cislo"></p>
+        <p class="kod-popis">Kód od pokladu</p>
+        <button id="kod-dalej" class="tlacidlo tlacidlo-hlavne" type="button">Ďalej</button>
+      </div>
+    </div>
+
+    <!-- Obr.15 OTVORENÁ TRUHLICA — koniec aplikácie; žiadny text, moment vyznieva -->
+    <div id="finale-truhlica" class="finale-obal skryta">
+      <img id="truhlica-obr" class="truhlica-obr" alt="Otvorená truhlica pokladu" />
+    </div>
+
   </div>
 
   <!-- Klasický <script> na konci tela — žiadny modul, žiadny fetch (kvôli file://) -->
