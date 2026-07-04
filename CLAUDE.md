@@ -20,10 +20,12 @@ experience of the story unfolding.
 Guiding principle (from the BRS): **simplicity over effects; reliability first;
 offline first.**
 
-**Owner / developer:** Jakub (beginner developer — see global `~/.claude/CLAUDE.md`).
-**Product Owner (content):** Janka. **Primary user:** the camp leader.
+**Owner / developer / Product Owner (content):** Janka (jediná rola — vlastníčka,
+prevádzkovateľka aj obsah; komunikácia s Jankou po slovensky). **Primary user:** the
+camp leader. _(Jakub bol pôvodný vývojár, od S17 mimo aktívnych rolí — figuruje už len
+v historických záznamoch sessions.)_
 **Repository:** Git with a **GitHub remote + GitHub Pages** deployment. Commit
-locally; push to `main` (Jakub approves pushes). **Push na GitHub aj session
+locally; push to `main` (Janka approves pushes). **Push na GitHub aj session
 journal robíme až na KONCI, keď bude appka hotová** — dovtedy len lokálne commity, ktoré robím **rovno, bez pýtania `CONFIRM`**. Pages is for distribution/testing —
 **the app must still run fully offline** (open `index.html` directly, no internet).
 
@@ -36,7 +38,7 @@ for current state is `memory/STATUS.md`.
 ## Jazyk — všetko po slovensky
 
 - Celý text aplikácie (nadpisy, heslá, správy) je v **odbornej slovenčine s diakritikou**.
-- Komunikácia s Jakubom po slovensky. V kóde: identifikátory (názvy premenných/funkcií) môžu
+- Komunikácia s Jankou po slovensky. V kóde: identifikátory (názvy premenných/funkcií) môžu
   ostať po anglicky (konvencia); UI text, komentáre a dokumentácia po slovensky.
 - Jediný platný spec je slovenský `BRS_fixed.docx` (staršia anglická verzia bola zmazaná).
 
@@ -79,7 +81,7 @@ for current state is `memory/STATUS.md`.
 4. `memory/INDEX.md` — topic-memory pointers
 5. `tasks/ACTIVE.md` — the current task spec
 
-After reading, declare the next task + plan + uncertainties; **WAIT for Jakub's
+After reading, declare the next task + plan + uncertainties; **WAIT for Janka's
 confirmation before writing code.** Run `/newsession` to do this automatically.
 After material work, run `/endsession`.
 
@@ -110,7 +112,7 @@ different from a typical backend — they are mostly about assets, spoilers, and
 - Commit `.env` or any secret (there should be none in this project).
 - Auto-correct or silently skip errors — log and surface them.
 - Bypass git hooks (`--no-verify`).
-- Add a framework, build tool, server, or dependency without Jakub confirming —
+- Add a framework, build tool, server, or dependency without Janka confirming —
   the whole point is a single set of static files that just open.
 
 ---

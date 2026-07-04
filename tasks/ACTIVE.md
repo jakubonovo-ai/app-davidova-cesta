@@ -3,14 +3,17 @@ _The ONE task this session is doing, plus the ordered next-pick queue. Read on
 bootstrap. NOT a history log — shipped cards leave here entirely._
 
 ## IN PROGRESS — resume thread
-**H2 návod: hotový, čaká na Jakubovo schválenie v prehliadači.**
+**H2 návod: hotový, čaká na schválenie v prehliadači (Janka).**
 - **Čo urobené (S17):** `navod.html` vytvorený (jedna A4, po slovensky, tlač cez Ctrl+P), git-ignored kvôli
-  spoileru (heslá). Fakty overené z kódu + cold review 0 defektov.
-- **Kde sme zastali:** Jakub má návod otvoriť dvojklikom na `navod.html`, skontrolovať obsah + náhľad tlače
+  spoileru (heslá). Fakty overené z kódu + cold review 0 defektov. **Prepis rolí na Janku HOTOVÝ (S17):**
+  Janka = jediná rola (vlastníčka/prevádzka/obsah/vývoj), komunikácia s Jankou; Jakub mimo aktívnych rolí,
+  ostáva len v historických záznamoch. Zmenené: `CLAUDE.md` (hlavička rolí + „WAIT for Janka" + komunikácia +
+  „bez Jankinho potvrdenia") a `project_build_plan.md` (vzorku ukázať Janke). STATUS.md historické záznamy
+  zámerne NEdotknuté.
+- **Kde sme zastali:** návod treba otvoriť dvojklikom na `navod.html`, skontrolovať obsah + náhľad tlače
   (Ctrl+P), a povedať čo upraviť / že je OK. Zvlášť: over WA/Messenger náhľad cez `?x=1` (Pages deploy
   opravený v S17 — thumbnail teraz 200).
-- **Ďalší konkrétny krok:** po Jakubovom OK → (1) doplniť prepis rolí na Janku (majiteľka/prevádzkovateľka) do
-  STATUS.md „Open decisions" + tam kde treba; (2) pokračovať H1 (balík/ZIP), H3 (generálka), H4 (odovzdanie).
+- **Ďalší konkrétny krok:** po schválení návodu → pokračovať H1 (balík/ZIP), H3 (generálka), H4 (odovzdanie).
 
 ## NOW
 **Hand-off vedúcemu — fázy H1–H4 (H2 návod rozrobený, viď resume thread hore).**

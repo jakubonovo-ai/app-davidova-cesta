@@ -22,7 +22,7 @@ postupne (1/deň), stav v `localStorage`, musí bežať offline. Simplicita, spo
 - **Projektor:** stage 16:9, hlavné texty ≥48px, vysoký kontrast; pomery strán podľa obrazovky.
 - **Font:** použiť **štýl fontu z `INTRO.png`** (ozdobný serif) — Janka, S2. Z obrázka sa presný
   font nedá vytiahnuť → nájdem voľne šíriteľný ekvivalent so slovenskou diakritikou, zabalený
-  offline; vzorku ukázať Jakubovi pred zafixovaním. (Titulky sú v INTRO zapečené → font treba
+  offline; vzorku ukázať Janke pred zafixovaním. (Titulky sú v INTRO zapečené → font treba
   hlavne pre pole hesla, tlačidlá, správy, clue slová, „13177".)
 
 ## Obsah 5 dní (BRS sekcia 7)
