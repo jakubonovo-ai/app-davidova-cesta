@@ -247,7 +247,8 @@ one Read call ingests it (move old detail to session notes when it grows)._
 - Whether to keep large binary assets (`app_images/`) in git or manage separately.
 - **Chýba (od Janky/produkcia):** ~~zvuk (mp3)~~ **DODANÉ + NAPOJENÉ S8 (13 mp3 v `audio/`)**; „táborový
   denníček" (referencia štýlu, DOD-3). Font: štýl z `INTRO.png` (Janka, S2) — nájdem voľný ekvivalent so SK diakritikou.
-- Verejný repo = heslá budú viditeľné → nechať public alebo dať private?
+- ~~Verejný repo = heslá viditeľné?~~ **ROZHODNUTÉ (S16, Jakub): ostáva PUBLIC** — Pages ako
+  záložná online verzia; riziko prijaté (offline tábor, publikum 6–11 r.). Pushnuté po `13ba891`.
 - Mapa rozhodnutá: **prázdna `MAPA.jfif`** + postupné odhaľovanie (nie popísaná „ChatGPT" mapa).
 - **Heslo D1** „Hospodin hľadí na tvoje srdce" + clue HOSPODIN/HĽADÍ/NA/TVOJE/SRDCE —
   **odsúhlasené Jakubom, v appke (S4).** `BRS_fixed.docx` má ešte staré „BOH VIDÍ TVOJE SRDCE"

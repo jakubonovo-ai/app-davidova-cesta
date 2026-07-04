@@ -8,9 +8,9 @@ bootstrap. NOT a history log — shipped cards leave here entirely._
   + krátky návod pre vedúceho (ovládanie: klik, Escape, reset, zvuk; heslá dní).
 - Na mieste (tábor): doladiť hlasitosti na projektorovej aparatúre — všetko v `HLASITOSTI`
   (`app.js`); posledný zvyšný bod go-live checklistu zo S14.
-- **Otvorené rozhodnutie pred pushom (Jakub):** repo je public a heslá sú čitateľné v `app.js` —
-  nechať public, alebo prepnúť na private? 22 lokálnych commitov zatiaľ nepushnutých (zámer:
-  push „na konci" — appka už JE hotová a otestovaná).
+- ~~Rozhodnutie push/public~~ **VYRIEŠENÉ (S16, Jakub):** repo ostáva PUBLIC, všetko pushnuté
+  na GitHub (`13ba891`) — Pages funguje ako záložná online verzia; riziko čitateľných hesiel
+  prijaté (offline tábor, deti 6–11).
 
 ## NEXT (ordered next-pick queue)
 1. Camp-ready hand-off — viď NOW.
