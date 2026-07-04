@@ -19,6 +19,13 @@ one Read call ingests it (move old detail to session notes when it grows)._
   vyžiadaný build cez API `POST .../pages/builds` → postavil najnovší `99a6955`, obrázok teraz 200.
   **Prevádzkový nález:** GitHub Pages sa po presune repa neopravil sám — pri budúcom zaseknutom deployi
   reštartnúť build cez API.)
+  **(Prepis rolí na Janku HOTOVÝ, `ef10d41`):** Janka = jediná rola (vlastníčka/prevádzka/obsah/vývoj),
+  komunikácia s Jankou; Jakub mimo aktívnych rolí, ostáva len v historických záznamoch sessions (S1–S17
+  zámerne NEdotknuté). Zmenené: `CLAUDE.md` (hlavička rolí, „WAIT for Janka", komunikácia, „bez Jankinho
+  potvrdenia") + `project_build_plan.md` (vzorku ukázať Janke). **(Globálne 2 profily,
+  `~/.claude/CLAUDE.md` — mimo repa):** Janka = DEFAULT vlastníčka VŠETKÝCH projektov; Jakub platí len keď
+  repo výslovne uvedie „Owner: Jakub" (samostatná Jakubova sekcia dole). Spoločné technické pravidlá
+  (kódovanie/nástroje/bezpečnosť/štýl) nezmenené pre oboch.
 - **S16 (2026-07-04)** — **Fáza 8 — testovanie + go-live: HOTOVÁ.** (1) Kódový offline audit čistý: žiadny
   sieťový odkaz (jediné http = SVG namespace konštanty), všetkých 12 obrázkov + 17 mp3 v kóde sedí s diskom
   presne aj veľkosťou písmen (Pages-safe). (2) Overená normalizácia hesla (`normalizujHeslo`, app.js:436):
