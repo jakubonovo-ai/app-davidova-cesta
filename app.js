@@ -10,6 +10,14 @@
 "use strict";
 
 /* =========================================================================
+   ⚠ TEST REŽIM — PRED GO-LIVE PREPNÚŤ NA false! ⚠
+   true = heslá sa NEkontrolujú: „Odomknúť" (aj Enter) odomkne deň aj s prázdnym
+   poľom — na rýchle preklikanie celého toku pri testovaní. Kým je zapnutý, na
+   obrazovke svieti štítok „TEST" (poistka, aby sa nezabudol vypnúť na tábore).
+   ========================================================================= */
+var TEST_REZIM_BEZ_HESIEL = true;
+
+/* =========================================================================
    Zvuk (Fáza 6)
    Filozofia (BRS sekcia 10): harfa `ambient` hrá nepretržito v slučke; ostatné
    zvuky sú efekty/podklady ponad ňu. Tvrdé pravidlá: všetko lokálne (offline);
@@ -42,7 +50,9 @@ var HLASITOSTI = {
   celebration: 1.0,
   whoosh: 1.0,          // dlhý prelet cez celú vlnu — naplno, nech vynikne nad harfou
   mystery: 0.9,
-  tick: 0.8             // tikanie počas lúštenia šifry
+  tick: 0.8,            // tikanie počas lúštenia šifry
+  kroky: 0.9,           // putovanie počas kreslenia cesty (mäkký zvuk, nech ho vidno nad harfou)
+  pergamen: 0.8         // rozbalenie zvitku (otvorenie clue) + zrolovanie (zatvorenie)
 };
 
 /* Ambient smie hrať až po prvom geste vedúceho. Kým je false, prehraj() efekty
@@ -488,9 +498,12 @@ function nastavMapuSymbolu(img, mapa) {
  * @param {Object} den - konfigurácia dňa.
  * @param {string} stav - vizuálny stav.
  * @param {number} index - poradie dňa (pre obsluhu kliku).
+ * @param {boolean} [prechodCesty] - true = práve sa kreslí cesta k aktívnemu bodu →
+ *   aktívny bod dostane prekrytie `zamok-kryt` (vyzerá ďalej uzamknuto, hmla + zámok);
+ *   po príchode cesty ho CSS rozplynie a bod „ožije" (záblesk + pulz).
  * @returns {HTMLElement} element zastávky.
  */
-function vytvorZastavku(den, stav, index) {
+function vytvorZastavku(den, stav, index, prechodCesty) {
   var el = document.createElement("div");
   el.className = "zastavka stav-" + stav;
   el.style.left = den.x + "%";
@@ -518,6 +531,15 @@ function vytvorZastavku(den, stav, index) {
   } else if (stav === STAV.AKTIVNA) {
     el.classList.add("klikatelna");
     el.appendChild(vytvorMarker());
+    if (prechodCesty) {
+      // Kým cesta „putuje" k bodu, bod vyzerá ako doteraz — uzamknutý (hmla + zámok).
+      // Prekrytie je position:absolute (mimo grid toku, neposunie marker). Po príchode
+      // cesty ho CSS rozplynie (zmiznutieKrytu) a bod sa prebudí (prebudenieKruhu).
+      var kryt = document.createElement("span");
+      kryt.className = "zamok-kryt";
+      kryt.appendChild(vytvorZamok());
+      el.appendChild(kryt);
+    }
     el.addEventListener("click", function () { otvorClue(index); });
   } else {
     el.appendChild(vytvorZamok());       // uzamknutá: hmla + zámok, nič viac
@@ -539,10 +561,11 @@ var BODKA_SIRKA = 0.0032;            // dĺžka bodky v dash (≈ 3 px)
 var MEDZERA_BODIEK_SIRKA = 0.0137;   // medzera medzi bodkami (≈ 13 px)
 
 /**
- * Vykreslí zlatú prerušovanú „cestu" medzi dokončenými bodmi.
- * BR-003 (žiadny spoiler): segment sa kreslí LEN medzi dvoma po sebe idúcimi
- * DOKONČENÝMI dňami — teda `dokonceneDni - 1` segmentov. Nikdy nevedie čiara
- * k aktívnemu ani uzamknutému bodu (to by prezradilo jeho polohu).
+ * Vykreslí zlatú prerušovanú „cestu" po zastávkach až k práve aktívnemu (blikajúcemu) bodu.
+ * BR-003 (žiadny spoiler): cesta smie končiť najviac pri AKTÍVNOM bode — ten už svoju
+ * polohu ukazuje blikaním, takže cesta k nemu neprezradí nič navyše (symbol ostáva skrytý).
+ * Nikdy sa NEkreslí k UZAMKNUTÉMU bodu (index > dokonceneDni) — to by odhalilo jeho polohu.
+ * Počet segmentov = `min(dokonceneDni, DNI.length-1)` (po D5 už žiadny aktívny nie je).
  *
  * Každý segment sa skráti o polomer kruhu (+ malá medzera) na oboch koncoch, aby
  * čiara končila PRI OKRAJI zastávky, nie v jej strede (Janka: nech neprechádza cez kruh).
@@ -564,10 +587,16 @@ function vykresliCestu(stav, animujPosledny) {
   // guard `dlzka <= 2*odsun` (0<=0) potom preskočí všetky segmenty → nenakreslí sa
   // nič a nedôjde k deleniu nulou. Cesta sa dokreslí, keď je mapa viditeľná.
   var odsun = (W > 0) ? POLOMER_ZASTAVKY_SIRKA * W + MEDZERA_CESTY_PX : 0;
-  var poslednyIndex = stav.dokonceneDni - 2;   // i posledného segmentu (spája i a i+1)
+  // Cesta vedie od dokončených bodov až k práve AKTÍVNEMU (blikajúcemu) bodu — ten už
+  // svoju polohu ukazuje blikaním, takže cesta k nemu neprezradí nič navyše (symbol
+  // ostáva skrytý). Nikdy sa NEkreslí k uzamknutému bodu (index > dokonceneDni) — to by
+  // odhalilo jeho polohu (BR-003). Posledný spájaný index = aktívny bod, teda dokonceneDni
+  // (ak ešte existuje; po D5 už žiadny aktívny nie je → hranica je posledný dokončený).
+  var poslednyBod = Math.min(stav.dokonceneDni, DNI.length - 1);
+  var poslednyIndex = poslednyBod - 1;         // i posledného segmentu (spája i a i+1)
 
-  // Spájame len dvojice bodov, ktoré sú OBA dokončené: i a i+1, kde i+1 < dokonceneDni.
-  for (var i = 0; i + 1 < stav.dokonceneDni; i++) {
+  // Segment i spája bod i a i+1, kde i+1 <= poslednyBod (posledný smie byť aktívny, nie uzamknutý).
+  for (var i = 0; i + 1 <= poslednyBod; i++) {
     // Zoznam bodov cesty v px: zastávka A → voliteľné medzibody (DNI[i].body) → zastávka B.
     // Medzibody (kľukatá cesta cez mostíky) sú v % javiska; prázdne pole = rovná čiara.
     var body = [{ x: DNI[i].x / 100 * W, y: DNI[i].y / 100 * H }];
@@ -598,6 +627,10 @@ function vykresliCestu(stav, animujPosledny) {
       // prehliadači, nezávisle od podpory merania na odpojenom uzle) → potom spustiť animáciu.
       var dlzka = anim.maskaCiara.getTotalLength();
       anim.maskaCiara.style.setProperty("--dlzka-cesty", dlzka);
+      // Kroky spusti až keď sa kreslenie REÁLNE začne (animationstart vystrelí po
+      // uplynutí CSS pauzy --cesta-pauza) → zvuk presne sedí s pohybom. Ak prekreslenie
+      // mapy element odstráni ešte pred štartom, udalosť nevznikne → žiadny zvuk navyše.
+      anim.maskaCiara.addEventListener("animationstart", function () { prehraj("kroky"); });
       anim.maskaCiara.classList.add("kresli");
     } else {
       svg.appendChild(halo);
@@ -698,13 +731,26 @@ function vytvorAnimovanuCestu(d, halo, core, W) {
  * @param {boolean} [animujCestu] - animovať najnovší segment cesty (len po odomknutí dňa).
  *   Pauza pred kreslením + samotné odkrytie sú v CSS (`.cesta-maska-ciara`), takže sa
  *   prekreslením mapy (reset/ďalší deň) čisto zrušia bez JS časovača.
+ *
+ * Poradie deja po odomknutí (Jakub): najprv sa „dôjde" po novej ceste k ďalšiemu bodu,
+ * AŽ POTOM tento bod ožije. Keď sa reálne kreslí segment (existuje aspoň 1 dokončený
+ * deň → cesta k aktívnemu bodu), pridá sa trieda `.cesta-kresli` na `#zastavky` a aktívny
+ * bod dostane prekrytie `zamok-kryt` (vyzerá ďalej uzamknuto — hmla + zámok, žiadna
+ * nespojitosť). Po príchode cesty CSS prekrytie rozplynie a bod sa prebudí (záblesk +
+ * pulz). Štart appky (bez `animujCestu`) nič z toho nedostane → aktívny bod bliká hneď.
+ * Všetko zaniká prekreslením mapy (žiadny JS časovač).
  */
 function vykresliZastavky(stav, animujCestu) {
   vykresliCestu(stav, animujCestu);
   var box = document.getElementById("zastavky");
   box.innerHTML = "";
+  // Cesta k práve aktívnemu bodu sa kreslí už po 1. dokončenom dni (Pastier→Prak). Vtedy
+  // oddialime blikanie toho bodu, kým cesta nedobehne. Po D5 už aktívny bod nie je, ale
+  // trieda neškodí (žiadny `.stav-aktivna` element, ktorý by ovplyvnila).
+  var kresliSaCesta = animujCestu === true && stav.dokonceneDni >= 1;
+  box.classList.toggle("cesta-kresli", kresliSaCesta);
   for (var i = 0; i < DNI.length; i++) {
-    box.appendChild(vytvorZastavku(DNI[i], stavZastavky(i, stav), i));
+    box.appendChild(vytvorZastavku(DNI[i], stavZastavky(i, stav), i, kresliSaCesta));
   }
 }
 
@@ -727,18 +773,53 @@ function ukazObrazovku(idObrazovky) {
 var aktivnyIndex = null;
 
 /**
- * Zobrazí/skryje jeden pergamen podľa id.
+ * Zobrazí/skryje jeden pergamen podľa id. Skrytie je OKAMŽITÉ (strih) — používa sa
+ * na výmenu clue→heslo (opticky ten istý zvitok, žiadny zvuk). Skutočné zatvorenie
+ * (návrat na mapu) rieši skryPergameny s plynulým vymiznutím.
  * @param {string} id - "clue-pergamen" alebo "heslo-pergamen".
  * @param {boolean} zobraz - true = ukáž, false = skry.
  */
 function ukazPergamen(id, zobraz) {
-  document.getElementById(id).classList.toggle("skryta", !zobraz);
+  var el = document.getElementById(id);
+  if (zobraz) el.classList.remove("zatvara");   // otvorenie ruší prípadné miznutie
+  el.classList.toggle("skryta", !zobraz);
 }
 
-/** Skryje oba pergameny (spoločné zatvorenie — reset, zrušenie, po odomknutí). */
+/**
+ * Plynulo zatvorí jeden pergamen: trieda `zatvara` spustí CSS fade (zladený so zvukom
+ * zrolovania — obraz nemizne strihom, kým zvuk ešte hrá), po dobehnutí sa pridá
+ * `skryta` (display:none). Už skrytý pergamen preskočí (na display:none animácia
+ * nebeží a `animationend` by nikdy neprišiel).
+ * POZOR: obsah pergamenu sa počas miznutia NESMIE meniť (symbol by preskočil na
+ * formulár hesla — „preklik") → upratanie obsahu príde až v `poSkryti`.
+ * @param {string} id - "clue-pergamen" alebo "heslo-pergamen".
+ * @param {Function} [poSkryti] - zavolá sa, keď je pergamen NEVIDITEĽNÝ (po fade,
+ *   alebo hneď, ak už bol skrytý) — bezpečné miesto na reset obsahu.
+ */
+function zatvorPergamenPlynulo(id, poSkryti) {
+  var el = document.getElementById(id);
+  if (el.classList.contains("skryta")) {
+    if (poSkryti) poSkryti();
+    return;
+  }
+  el.classList.add("zatvara");
+  var dokonci = function (e) {
+    // animationend BUBLÁ aj z detí (napr. zjavenie symbolu pri preskočení) — reaguj
+    // len na fade samotného obalu, inak by sa pergamen skryl predčasne.
+    if (e.target !== el) return;
+    el.removeEventListener("animationend", dokonci);
+    el.classList.add("skryta");
+    el.classList.remove("zatvara");
+    if (poSkryti) poSkryti();
+  };
+  el.addEventListener("animationend", dokonci);
+}
+
+/** Skryje oba pergameny (spoločné zatvorenie — reset, zrušenie, po odomknutí).
+    Heslo pergamen sa uprace až po zmiznutí (obsah počas fade ostáva zamrznutý). */
 function skryPergameny() {
-  ukazPergamen("clue-pergamen", false);
-  ukazPergamen("heslo-pergamen", false);
+  zatvorPergamenPlynulo("clue-pergamen");
+  zatvorPergamenPlynulo("heslo-pergamen", resetOdomknutie);
 }
 
 /** @param {string} text - správa pod poľom hesla (prázdny = nič). */
@@ -775,6 +856,7 @@ function otvorClue(index) {
   aktivnyIndex = index;
   vykresliClue(DNI[index]);
   ukazPergamen("clue-pergamen", true);
+  prehraj("pergamen");               // rozbalenie zvitku (hmatový moment otvorenia)
   stlmHarfu(HLASITOST_HARFY_CLUE);   // harfa jemnejšie počas lúštenia (nie ticho); vráti sa v otvorHeslo/zavriHeslo
   // Zvuk prostredia sa už NEspúšťa tu — hrá až po odhalení symbolu (viď ukazOdomknutie).
 }
@@ -782,6 +864,10 @@ function otvorClue(index) {
 /** ĎALEJ z clue pergamenu → HESLO pergamen (obr.4). Pole je čisté a zaostrené. */
 function otvorHeslo() {
   if (aktivnyIndex === null) return;
+  // Poistka: východzí vzhľad (pečať + formulár, žiadny starý symbol) tesne PRED
+  // zobrazením — kryje aj prípad, že predošlý fade zrušilo rýchle znovu-otvorenie
+  // (animationend vtedy nepríde a odložený reset zo skryPergameny sa nespustí).
+  resetOdomknutie();
   // Harfa ostáva tichá aj počas zadávania hesla (nevraciame ju) — stlmenie z otvorClue
   // pretrváva až po odomknutie/zavretie. Vráti ju dokonciOdomknutie alebo zavriHeslo.
   var pole = document.getElementById("pole-heslo");
@@ -789,6 +875,8 @@ function otvorHeslo() {
   nastavSpravu("");
   ukazPergamen("clue-pergamen", false);
   ukazPergamen("heslo-pergamen", true);
+  // Zvuk rozbalenia tu NEhrá (Jakub): pergamen je opticky stále „ten istý" zvitok,
+  // rozbalenie zaznelo pri clue; zrolovanie zaznie až pri zatvorení (zavriHeslo).
   pole.focus();
 }
 
@@ -799,12 +887,20 @@ function otvorHeslo() {
  * deň. Zruší aj prípadné bežiace časovače odomknutia (žiadny „duch" po zavretí).
  */
 function zavriHeslo() {
+  // Zrolovanie zvitku — len ak bol nejaký pergamen naozaj otvorený (reset bez
+  // otvoreného pergamenu by inak pustil zvuk „z ničoho"). Kontrola PRED skrytím.
+  var bolOtvoreny =
+    !document.getElementById("clue-pergamen").classList.contains("skryta") ||
+    !document.getElementById("heslo-pergamen").classList.contains("skryta");
+  if (bolOtvoreny) prehraj("pergamen");
   aktivnyIndex = null;
   zastavProstredie();                   // pergamen sa zatvára → zvuk prostredia (po odhalení symbolu) končí
   stlmHarfu(false);                     // istota: ak sa zatvára počas odomknutia (reset), vráť harfu
   zrusOdomkCasovace();
   sekvenciaHotovo = null;
-  resetOdomknutie();
+  // resetOdomknutie sa tu už NEvolá — počas fade by prepol obsah na formulár hesla
+  // („preklik"). Obsah ostáva zamrznutý; uprace ho skryPergameny až po zmiznutí
+  // a poistka v otvorHeslo tesne pred ďalším zobrazením.
   document.getElementById("heslo-pergamen-panel").classList.remove("trasie");
   skryPergameny();
 }
@@ -898,7 +994,8 @@ function dokonciOdomknutie(okamzite) {
 
 /**
  * Vráti heslo pergamen do východzieho vzhľadu (zapečatený, zadávanie viditeľné,
- * symbol skrytý a vyčistený). Volá zavriHeslo po dokončení aj reset postupu.
+ * symbol skrytý a vyčistený). NIKDY sa nevolá na viditeľnom pergamene (preklik!) —
+ * volá ho skryPergameny AŽ PO zmiznutí (fade) a otvorHeslo tesne PRED zobrazením.
  * Symbol.src sa vyprázdni, aby ďalší deň neblikol starým obrázkom pred vložením.
  */
 function resetOdomknutie() {
@@ -920,9 +1017,10 @@ function resetOdomknutie() {
 function skusOdomknut() {
   if (aktivnyIndex === null) return;
   var zadane = normalizujHeslo(document.getElementById("pole-heslo").value);
-  if (zadane === "") return;
+  // TEST režim: prázdne pole nezastaví a heslo sa nekontroluje (rýchle preklikanie).
+  if (zadane === "" && !TEST_REZIM_BEZ_HESIEL) return;
 
-  if (zadane === normalizujHeslo(DNI[aktivnyIndex].heslo)) {
+  if (TEST_REZIM_BEZ_HESIEL || zadane === normalizujHeslo(DNI[aktivnyIndex].heslo)) {
     var den = DNI[aktivnyIndex];
     var stav = nacitajStav();
     stav.dokonceneDni = aktivnyIndex + 1;   // ulož najprv (EC-003), potom odhaľ
@@ -960,9 +1058,9 @@ var FINALE_OBRAZKY = {
 var KOD_TRUHLICE = "13177";           // číslice symbolov D1→D5 (zdroj: project_build_plan.md)
 var TRVANIE_VLNY_MS = 4200;           // 5 zastávok × 0,55 s rozostup + dosvit poslednej
 var TRVANIE_ZAVERECNEJ_MS = 9000;     // čas na prečítanie záverečných textov
-// Kým sa vo finále nakreslí posledná cesta (jaskyňa→Jeruzalem) — až potom svetelná vlna.
-// = pauza (0,7 s) + trvanie animácie (1,8 s) z `.cesta-maska-ciara` v style.css + malý dosvit.
-var TRVANIE_KRESLENIA_CESTY_MS = 2700;
+// Nádych pred vlnou: zrolovanie pergamenu (~1,5 s) doznie + symbol Jeruzalema chvíľu
+// „sedí" na mape, až potom whoosh (Jakub: zvuky sa nesmú prelínať).
+var PAUZA_PRED_VLNOU_MS = 2500;
 
 /*
   finaleFaza != null znamená „finále beží" (hodnota = aktuálna obrazovka).
@@ -1004,20 +1102,21 @@ function zavriFinale() {
 }
 
 /**
- * Obr.10 — finálna mapa. Najprv sa animovane dokreslí posledná cesta (jaskyňa→Jeruzalem),
- * čím sa „dôjde" do cieľa; AŽ POTOM sa spustí svetelná vlna cez všetkých 5 symbolov.
- * Spúšťa sa po odomknutí D5 aj klikom na dokončený Jeruzalem (replay — cesta sa nakreslí znova).
+ * Obr.10 — finálna mapa. Cesta k Jeruzalemu sa nakreslila už po odomknutí D4 (cesta vedie
+ * k blikajúcemu bodu), takže tu sa mapa len staticky prekreslí — objaví sa odhalený symbol
+ * Jeruzalema na hotovej ceste. Potom NÁDYCH (zrolovanie pergamenu doznie, symbol chvíľu
+ * sedí na mape) a až potom svetelná vlna cez všetkých 5 symbolov — zvuky sa neprelínajú.
+ * Spúšťa sa po odomknutí D5 aj klikom na dokončený Jeruzalem (replay).
  */
 function spustiFinale() {
   if (finaleFaza !== null) return;    // už beží — druhé spustenie by rozbilo časovače
-  finaleFaza = "kreslenie";           // podfáza pred vlnou: kreslí sa posledná cesta
+  finaleFaza = "pauza";               // drží guard + klik počas nádychu preskočí na vlnu
   ukazObrazovku("obrazovka-mapa");
-  vykresliZastavky(nacitajStav(), true);   // animuj poslednú cestu (D4→D5) v smere putovania
-  // Vlnu spusti až keď je cesta dokreslená (dovtedy len mapa so symbolmi + rastúca cesta).
-  finaleCasovace.push(window.setTimeout(spustiVlnu, TRVANIE_KRESLENIA_CESTY_MS));
+  vykresliZastavky(nacitajStav());    // staticky: celá cesta + symbol D5, žiadna animácia
+  finaleCasovace.push(window.setTimeout(spustiVlnu, PAUZA_PRED_VLNOU_MS));
 }
 
-/** Svetelná vlna cez všetkých 5 symbolov (whoosh). Volané po dokreslení poslednej cesty. */
+/** Svetelná vlna cez všetkých 5 symbolov (whoosh). Volaná po nádychu zo spustiFinale. */
 function spustiVlnu() {
   zrusFinaleCasovace();
   finaleFaza = "mapa";                 // teraz beží vlna — klik na mapu preskočí na záverečnú
@@ -1120,6 +1219,15 @@ function start() {
   var obrazky = document.querySelectorAll(".stage img");
   for (var oi = 0; oi < obrazky.length; oi++) { pripravFallbackObrazka(obrazky[oi]); }
 
+  // TEST režim: viditeľný štítok, kým sú heslá vypnuté — poistka proti tomu, aby
+  // appka omylom išla na tábor bez kontroly hesiel (prepínač hore v súbore).
+  if (TEST_REZIM_BEZ_HESIEL) {
+    var testStitok = document.createElement("div");
+    testStitok.className = "test-stitok";
+    testStitok.textContent = "TEST — heslá vypnuté";
+    document.querySelector(".stage").appendChild(testStitok);
+  }
+
   // Autoplay policy: harfa smie štartovať až po prvom geste vedúceho. Jednorazový
   // (once) poslucháč na celom dokumente → zafunguje nech je prvý klik kdekoľvek
   // (Začať, mapa, menu…) a už sa neopakuje (harfa sa nereštartuje). Zvuk je doplnok
@@ -1158,9 +1266,9 @@ function start() {
   });
 
   // Finále: klik = ďalej (automatické kroky sa dajú preskočiť, ostatné vedie vedúci).
-  // Počas kreslenia poslednej cesty preskočí klik rovno na vlnu; počas vlny na záverečnú.
+  // Počas nádychu pred vlnou preskočí klik rovno na vlnu; počas vlny na záverečnú.
   document.getElementById("obrazovka-mapa").addEventListener("click", function () {
-    if (finaleFaza === "kreslenie") spustiVlnu();
+    if (finaleFaza === "pauza") spustiVlnu();
     else if (finaleFaza === "mapa") ukazZaverecnu();
   });
   document.getElementById("finale-zaverecna").addEventListener("click", ukazMystery);

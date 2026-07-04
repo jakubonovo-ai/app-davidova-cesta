@@ -4,6 +4,27 @@ one Read call ingests it (move old detail to session notes when it grows)._
 
 ## Recent sessions (rolling window)
 
+- **S14 (2026-07-04)** — **Dramaturgia večera (poradie animácií + zvuky) + TEST režim** (Jakub, prehliadač,
+  iteratívne; 3× cold review). **(1) Nové poradie po odomknutí:** symbol → cesta → AŽ POTOM ožije ďalší bod
+  (trieda `.cesta-kresli` na `#zastavky`; časovanie výhradne CSS, bez JS časovačov). **(2) Cesta vedie až k práve
+  AKTÍVNEMU (blikajúcemu) bodu** (`poslednyBod = min(dokonceneDni, DNI.length-1)` vo `vykresliCestu`) — BR-003
+  reinterpretácia odsúhlasená Jakubom: blikajúci bod polohu aj tak ukazuje, symbol ostáva skrytý; k UZAMKNUTÉMU
+  bodu cesta nikdy nevedie (cold review: tabuľka pre dokonceneDni 0–5, žiadny únik). **(3) Prebudenie bodu:**
+  počas kreslenia je ďalší bod maskovaný ako uzamknutý (`zamok-kryt` prekrytie — replika hmly+zámku; kruh
+  priehľadný cez `prebudenieKruhu` from-frame), po príchode cesty sa hmla rozplynie + záblesk + pulz (pulz perióda
+  1.8s literál — NIE `--cesta-kreslenie`, oprava z review). **(4) Finále bez re-kreslenia cesty** (cesta existuje
+  už od D4): statická mapa → nádych `PAUZA_PRED_VLNOU_MS=2500` → whoosh; podfáza „kreslenie" +
+  `TRVANIE_KRESLENIA_CESTY_MS` ODSTRÁNENÉ, nová podfáza `finaleFaza="pauza"` (klik = preskočiť na vlnu).
+  **(5) Nové zvuky (16 mp3):** `kroky` (cez `animationstart` masky — presná synchronizácia so štartom kreslenia,
+  0.9) a `pergamen` (0.8; rozbalenie LEN pri otvorení clue; zrolovanie pri každom reálnom zatvorení — guard
+  `bolOtvoreny` proti zvuku „z ničoho" pri resete; clue→heslo bez zvuku). **(6) Pauzy zladené:** `--cesta-pauza`
+  0.7→1.7 s (zrolovanie doznie pred krokmi); časovanie kreslenia má JEDINÝ domov v CSS `:root`
+  (`--cesta-pauza`/`--cesta-kreslenie`/`--cesta-hotova`). **(7) Pergamen mizne fadeom** (0.8 s, `zatvorPergamenPlynulo`
+  + trieda `zatvara`): obsah počas fade ZAMRZNUTÝ — `resetOdomknutie` až po skrytí (`poSkryti` callback) + poistka
+  v `otvorHeslo` (oprava „prekliku" na formulár hesla); `animationend` filtrovaný na obal (bublanie detí).
+  **(8) ⚠ TEST REŽIM:** `TEST_REZIM_BEZ_HESIEL=true` v `app.js` (heslá sa nekontrolujú, prázdne pole odomkne)
+  + červený štítok „TEST — heslá vypnuté" vľavo dole — **pred go-live prepnúť na false** (karta v ACTIVE.md).
+  Otestované v prehliadači (Jakub): celý tok D1–D5 + finále + zvuky OK.
 - **S13 (2026-07-03)** — **Zvuk — úprava správania + UI ovládania** (Jakub, prehliadač, iteratívne; mimo plánu,
   NIE Fáza 8). **(1) Prostredie sa presunulo z clue na odhalenie symbolu:** už NEhrá pri clue pergamene, ale
   spustí sa až po `light_reveal` (po zjavení symbolu dňa) a hrá v slučke do zavretia pergamenu
@@ -155,7 +176,10 @@ one Read call ingests it (move old detail to session notes when it grows)._
 - ✅ Fáza 7 — polish (`onerror`/`onload` fallback pre `<img>` — rozbitá ikona sa skryje, žiadny spoiler) (S10)
 - ✅ Zvuk — úprava správania (prostredie po odhalení symbolu, fade prechod, D2 vietor, D1 ovce+vtáky) +
   UI ovládanie (burger → 2 ikonky vpravo dole: reset + zvuk) (S13)
-- ⬜ Fáza 8 — test: offline verification (TS-002, open index.html no internet) + generálka (TS-007) — NEXT
+- ✅ Dramaturgia večera — poradie symbol→cesta→prebudenie bodu, cesta k aktívnemu bodu, finále s nádychom,
+  zvuky kroky+pergamen, pergamen fade (S14)
+- ⬜ Fáza 8 — test: offline verification (TS-002) + generálka (TS-007 s REÁLNYMI heslami) + go-live checklist
+  (vypnúť TEST režim!) — NEXT
 - ⬜ Camp-ready hand-off to the leader
 
 ## System / data state
@@ -165,11 +189,18 @@ one Read call ingests it (move old detail to session notes when it grows)._
   **`davidovaCesta.zvuk`** (vypnutie zvuku „off"/"on" — od S8, oddelený od postupu).
   **S12 localStorage NEZMENENÝ** (kľúč aj tvar `{verzia,dokonceneDni,koniecVideny}` netknutý —
   cesta je čisto vizuálna vrstva čítajúca `dokonceneDni`).
-- **Mapa – cesta (S12):** per-segment medzibody `DNI[i].body` (pole `{x,y}` v % javiska, voliteľné =
-  rovná čiara). Cesta = SVG `#cesta` (variant D bodky, škálované cqw/pomer k W). Animácia po dĺžke
-  (SVG maska + `stroke-dashoffset`). Kruhy `.stav-*` majú J1 zvýraznenie + O1 inset obrys (cqw).
+- **Mapa – cesta (S12, prerobené S14):** per-segment medzibody `DNI[i].body` (pole `{x,y}` v % javiska,
+  voliteľné = rovná čiara). Cesta = SVG `#cesta` (variant D bodky, škálované cqw/pomer k W). Animácia po
+  dĺžke (SVG maska + `stroke-dashoffset`). Kruhy `.stav-*` majú J1 zvýraznenie + O1 inset obrys (cqw).
+  **S14:** cesta vedie až k AKTÍVNEMU bodu (nikdy k uzamknutému); časovanie kreslenia má jediný domov
+  v CSS `:root` (`--cesta-pauza` 1.7s / `--cesta-kreslenie` 1.8s / `--cesta-hotova`); po odomknutí je ďalší
+  bod maskovaný (`zamok-kryt`) a prebudí sa po príchode cesty; finále cestu NErekreslí (nádych 2.5s → vlna).
+- **⚠ TEST režim (S14):** `TEST_REZIM_BEZ_HESIEL=true` v `app.js` — heslá vypnuté na testovanie, na
+  obrazovke štítok „TEST". **Go-live vyžaduje prepnúť na false** (karta v ACTIVE.md).
 - Tests: none yet.
-- Assets present: `audio/` — **14 mp3** (S8 dodal 13, **S13 pridal `sheep`** + vymenil `cave`). Prostredie sa
+- Assets present: `audio/` — **16 mp3** (S8 dodal 13, S13 pridal `sheep` + vymenil `cave`, **S14 pridal
+  `kroky` + `pergamen`**: kroky = putovanie pri kreslení cesty cez `animationstart`, 0.9; pergamen =
+  rozbalenie pri otvorení clue + zrolovanie pri zatvorení, 0.8). Prostredie sa
   od **S13** už NEspúšťa pri clue, ale **až po odhalení symbolu** (`light_reveal`) a hrá do zavretia pergamenu;
   na konci **jemný fade-out** (`fadeOutProstredia`, 800 ms) pred návratom harfy (preskočenie vedúcim = okamžite).
   Zvuky prostredia dní: **D1 `birds`+`sheep` (spolu — pole)**, **D2 `wind`** (S13: z `water`), D3 `leaves`,

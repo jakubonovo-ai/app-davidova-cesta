@@ -20,13 +20,12 @@ a store — detail lives in STATUS.md and session notes. One line per session in
 ## Last session
 _Newest first. ONE line per session: outcome headline + (resume: next action) if paused._
 
-- **S13 (2026-07-03)** — **Zvuk — úprava správania + UI** (Jakub, prehliadač, mimo plánu). Prostredie sa presunulo
-  z clue na **odhalenie symbolu** (po `light_reveal`, do zavretia pergamenu) s **jemným fade-out prechodom** na harfu;
-  D2 Prak **`water`→`wind`**; D1 Pastier **ovce+vtáky spolu** (`spustiProstredie` prerobené na POLE, nový `sheep.mp3`);
-  harfa počas clue+hesla stlmená (0.20); symbol dlhšie (6 s); `cave.mp3` vymenené. **Burger menu → 2 ikonky vpravo dole**
-  (reset + zvuk reproduktor/preškrtnutý). 3× cold review: 0 defektov (+1 CSS špecifickosť bug opravený). (resume: Fáza 8 — offline test TS-002 + generálka TS-007).
-- **S10 (2026-07-03)** — **Fáza 7 — polish hotová** (Jakub, prehliadač). `onerror`/`onload` fallback pre `<img>`
-  (`pripravFallbackObrazka` v `app.js`): nenačítaný obrázok sa skryje na neutrálny podklad (žiadna rozbitá ikona
-  na stene, žiadny spoiler BR-003), `onload` ho zas zobrazí. (resume: Fáza 8 — offline test TS-002 + generálka TS-007).
-- **S9 (2026-07-02)** — Vizuálne doladenie 5 symbolov na mape (per-deň `mapa{}` mechanika, oprava elipsy). Detail v STATUS.md.
-- **S8 (2026-07-02)** — Fáza 6 (zvuk) postavená — 13 mp3 napojených (S13 neskôr zmenil, kedy hrá prostredie). Detail v STATUS.md.
+- **S14 (2026-07-04)** — **Dramaturgia večera + 2 nové zvuky + TEST režim** (Jakub, prehliadač, iteratívne). Nové poradie:
+  symbol → cesta putuje **až k blikajúcemu bodu** (BR-003 reinterpretácia, Jakub OK — bod polohu aj tak ukazuje) → bod sa
+  **prebudí** (maskovaný ako zamknutý `zamok-kryt`, po príchode cesty záblesk+pulz). Finále bez re-kreslenia cesty (nádych
+  2,5 s → whoosh). Zvuky `kroky` (animationstart) + `pergamen` (otvorenie clue/zrolovanie pri zavretí); pauzy zladené
+  (`--cesta-pauza` 1,7 s). Pergamen mizne fadeom (obsah zamrznutý — reset až po skrytí; oprava prekliku). **⚠ TEST_REZIM_BEZ_HESIEL=true**
+  (heslá vypnuté + štítok) — **pred go-live prepnúť na false!** 3× cold review. (resume: Fáza 8 — offline TS-002 + generálka TS-007 s reálnymi heslami).
+- **S13 (2026-07-03)** — **Zvuk — úprava správania + UI**: prostredie po odhalení symbolu (fade-out na harfu), D2 wind,
+  D1 ovce+vtáky (pole), burger → 2 ikonky vpravo dole. 3× cold review: 0 defektov. Detail v STATUS.md.
+- **S10 (2026-07-03)** — Fáza 7 — `onerror`/`onload` fallback pre `<img>` (žiadna rozbitá ikona/spoiler). Detail v STATUS.md.

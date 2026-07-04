@@ -3,6 +3,20 @@
    Pravidlá: offline (file://), 16:9 javisko na stenu, vysoký kontrast.
    ========================================================================= */
 
+/* --- Časovanie kreslenia cesty (jeden domov) ---
+   Ako dlho trvá, kým sa animovane dokreslí najnovší segment cesty = pauza + kreslenie.
+   Používa ho `.cesta-maska-ciara.kresli` (samotné kreslenie) aj oneskorenie blikania
+   ďalšieho bodu (`#zastavky.cesta-kresli …`), aby bod nábehol PRESNE keď cesta dobehne.
+   Toto je JEDINÝ domov časovania kreslenia — JS naň nič neviaže (finále štartuje vlnu
+   priamo, bez čakania na kreslenie). */
+:root {
+  /* Pauza pred kreslením: zrolovanie pergamenu (~1,5 s) musí DOZNIEŤ, až potom kroky
+     + kreslenie (Jakub: zvuky sa nesmú prelínať) + malý nádych navyše. */
+  --cesta-pauza: 1.7s;
+  --cesta-kreslenie: 1.8s;             /* trvanie samotného odkrývania cesty */
+  --cesta-hotova: calc(var(--cesta-pauza) + var(--cesta-kreslenie));   /* = 3,5 s: cesta dokreslená */
+}
+
 /* --- Základ stránky: čierne okolie okolo javiska (letterbox pri inom pomere okna) --- */
 html, body {
   height: 100%;
@@ -131,16 +145,17 @@ body {
    `vytvorAnimovanuCestu`): biela čiara pozdĺž trasy sa „kreslí" cez stroke-dashoffset od
    plnej dĺžky po 0. `animation-delay` je krátka pauza po objavení symbolu. Prekreslením
    mapy element zanikne → animácia sa čisto zruší.
-   POZOR: dĺžka (delay 0,7 s + 1,8 s) je zosúladená s `TRVANIE_KRESLENIA_CESTY_MS`
-   v app.js (finále čaká na dokreslenie cesty pred vlnou) — pri zmene uprav OBE. */
+   Pauza aj trvanie idú z premenných v `:root` (`--cesta-pauza`/`--cesta-kreslenie`)
+   — jediný domov časovania; ladí sa tam. */
 .cesta-maska-ciara {
   stroke-dasharray: var(--dlzka-cesty);
   stroke-dashoffset: var(--dlzka-cesty);   /* maska najprv skrytá (celá cesta „nenakreslená") */
 }
 /* Trieda `.kresli` pridá app.js až po zmeraní dĺžky (po pripojení do DOM) → animácia
-   sa spustí kontrolovane, nie kým je `--dlzka-cesty` ešte nenastavená. */
+   sa spustí kontrolovane, nie kým je `--dlzka-cesty` ešte nenastavená.
+   Trvanie/pauza z premenných (`:root`) — ten istý fakt riadi aj oneskorenie blikania. */
 .cesta-maska-ciara.kresli {
-  animation: kresliCestu 1.8s ease-out 0.7s both;
+  animation: kresliCestu var(--cesta-kreslenie) ease-out var(--cesta-pauza) both;
 }
 @keyframes kresliCestu {
   to { stroke-dashoffset: 0; }             /* „nakreslí" masku od začiatku po koniec trasy */
@@ -220,6 +235,92 @@ body {
   100% { transform: scale(1.6);  opacity: 0;   }
 }
 
+/* --- Poradie deja po odomknutí: cesta „prebudí" ďalší bod (Jakub) ---
+   Kým sa kreslí nový segment cesty, ďalší bod vyzerá STÁLE uzamknuto — prekrytie
+   `.zamok-kryt` (replika hmly + zámku) sedí nad zlatým kruhom a vlastný vzhľad kruhu
+   (okraj/pozadie/žiara) je držaný priehľadný. Keď cesta dorazí (`--cesta-hotova` —
+   tá istá premenná riadi aj samotné kreslenie), hmla so zámkom sa rozplynie, kruh sa
+   rozžiari ZÁBLESKOM (silný nástup — háčik na ďalší deň) a začne pulzovať.
+   app.js pridá `.cesta-kresli` na `#zastavky` + `zamok-kryt` do aktívneho bodu len
+   pri animovanom prekreslení po odomknutí; všetko zaniká prekreslením mapy
+   (reset/ďalší deň/finále) → žiadny JS časovač. */
+
+/* Prekrytie: verná replika uzamknutého vzhľadu (viď .stav-uzamknuta) nad aktívnym
+   kruhom. inset -0.5cqw = prekryje aj okraj kruhu pod sebou; mimo grid toku. */
+.zamok-kryt {
+  position: absolute;
+  inset: -0.5cqw;
+  border-radius: 50%;
+  border: 0.5cqw solid rgba(110, 110, 110, 0.45);
+  background:
+    radial-gradient(circle,
+      rgba(228, 224, 214, 0.85) 40%,
+      rgba(228, 224, 214, 0.35) 75%,
+      rgba(228, 224, 214, 0.0) 100%);
+  display: grid;
+  place-items: center;
+  pointer-events: none;               /* klik prejde na zastávku (vedie vedúci) */
+}
+.zamok-kryt .zamok {
+  width: 42%;
+  height: 42%;
+  color: #6b6b6b;
+  display: grid;
+  place-items: center;
+}
+.zamok-kryt .zamok svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Kým cesta putuje: kruh je priehľadný (both drží `from`), vidno len prekrytie.
+   Po príchode cesty: záblesk žiary (45 %) → ustáli sa na bežnom J1 vzhľade. */
+#zastavky.cesta-kresli .stav-aktivna {
+  animation: prebudenieKruhu 0.9s ease-out var(--cesta-hotova) both;
+}
+@keyframes prebudenieKruhu {
+  from {
+    border-color: transparent;
+    background-color: transparent;
+    box-shadow: inset 0 0 0 0.12cqw rgba(40, 25, 10, 0),
+                0 0 0 0 rgba(240, 200, 96, 0);
+  }
+  45% {
+    border-color: rgba(206, 162, 78, 0.95);
+    background-color: rgba(255, 244, 214, 0.13);
+    box-shadow: inset 0 0 0 0.12cqw rgba(40, 25, 10, 0.85),
+                0 0 3.5cqw 1.2cqw rgba(240, 200, 96, 0.85);   /* záblesk prebudenia */
+  }
+  to {
+    border-color: rgba(206, 162, 78, 0.95);
+    background-color: rgba(255, 244, 214, 0.13);
+    box-shadow: inset 0 0 0 0.12cqw rgba(40, 25, 10, 0.85),
+                0 0 2cqw 0.4cqw rgba(214, 173, 95, 0.5);      /* = bežná žiara J1 */
+  }
+}
+#zastavky.cesta-kresli .stav-aktivna .zamok-kryt {
+  animation: zmiznutieKrytu 0.6s ease-out var(--cesta-hotova) both;   /* hmla sa rozplynie */
+}
+@keyframes zmiznutieKrytu {
+  to { opacity: 0; }
+}
+#zastavky.cesta-kresli .stav-aktivna .marker {
+  animation: zjavAktivnej 0.6s ease-out var(--cesta-hotova) both;     /* zlatý bod nábehne */
+}
+@keyframes zjavAktivnej {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+/* Pulzujúci krúžok: statický by presvital okolo hmly už počas kreslenia (je mimo
+   kruhu, inset -6 %) → opacity:0 ho drží skrytý; keď sa animácia rozbehne, opacity
+   riadia keyframes `puls` (infinite → property sa už neuplatní). */
+#zastavky.cesta-kresli .stav-aktivna::after {
+  opacity: 0;
+  /* 1.8s = perióda pulzu (zhodná so základným pravidlom .stav-aktivna::after vyššie),
+     NIE trvanie kreslenia cesty — tie sa len náhodou rovnajú. */
+  animation: puls 1.8s ease-out var(--cesta-hotova) infinite;
+}
+
 /* --- Uzamknutá: mliečna hmla + neutrálny zámok. Symbol sa NEVYKRESLÍ (BR-003) --- */
 .stav-uzamknuta {
   background:
@@ -241,6 +342,21 @@ body {
 .stav-uzamknuta .zamok svg {
   width: 100%;
   height: 100%;
+}
+
+/* --- TEST režim: štítok vľavo dole, kým sú heslá vypnuté (app.js TEST_REZIM_BEZ_HESIEL).
+   Zámerne viditeľný na projekcii — pripomína prepnúť na false pred go-live. --- */
+.test-stitok {
+  position: absolute;
+  bottom: 2.5%;
+  left: 1.5%;
+  z-index: 40;                        /* ako ovládanie — nad pergamenom, viditeľný vždy */
+  font-size: 1.3cqw;
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(160, 30, 30, 0.55);   /* tlmená červená = „pozor, nie ostrý režim" */
+  padding: 0.3cqw 0.9cqw;
+  border-radius: 0.4cqw;
+  pointer-events: none;               /* neblokuje kliky */
 }
 
 /* =========================================================================
@@ -299,6 +415,16 @@ body {
   display: grid;
   place-items: center;
   background: rgba(0, 0, 0, 0.6);
+}
+/* Plynulé zatvorenie (app.js zatvorPergamenPlynulo): obraz vymizne spolu so zvukom
+   zrolovania, nie strihom. Po dobehnutí JS pridá .skryta (animationend). Trvanie
+   drž POD --cesta-pauza (1,7 s), aby kroky/kreslenie štartovali až po zmiznutí. */
+.pergamen-obal.zatvara {
+  animation: zmiznutiePergamenu 0.8s ease-in both;
+  pointer-events: none;               /* miznúci pergamen už neblokuje kliky */
+}
+@keyframes zmiznutiePergamenu {
+  to { opacity: 0; }
 }
 
 /*
