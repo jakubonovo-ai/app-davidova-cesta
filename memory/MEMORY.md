@@ -20,15 +20,11 @@ a store — detail lives in STATUS.md and session notes. One line per session in
 ## Last session
 _Newest first. ONE line per session: outcome headline + (resume: next action) if paused._
 
+- **S16 (2026-07-04)** — **Fáza 8 HOTOVÁ: appka je go-live ready.** Offline audit čistý (0 sieťových odkazov,
+  assets case-match), TEST režim vypnutý (`2e3d13c`), TS-002 offline + TS-007 generálka s reálnymi heslami
+  prešli (Jakub). Ostáva: hand-off vedúcemu + hlasitosti na mieste. (resume: rozhodnúť push/public-vs-private
+  — heslá sú v `app.js` a repo je public; 22 commitov nepushnutých.)
 - **S15 (2026-07-04)** — **Slávnostný zvuk `zaver` na záverečnej obrazovke finále** (17. mp3, dodala Janka; hrá pri
-  Jeruzaleme v zlate, stop pri prekliku/Escape/resete) + oprava „Vypnúť zvuk" — stlmenie sa premietne na VŠETKY
-  `<audio>` (aj znejúce jednorazové). 1× cold review, otestované (Jakub). (resume: Fáza 8 — offline TS-002 + generálka
-  TS-007 s reálnymi heslami; ⚠ TEST režim stále zapnutý.)
-- **S14 (2026-07-04)** — **Dramaturgia večera + 2 nové zvuky + TEST režim** (Jakub, prehliadač, iteratívne). Nové poradie:
-  symbol → cesta putuje **až k blikajúcemu bodu** (BR-003 reinterpretácia, Jakub OK — bod polohu aj tak ukazuje) → bod sa
-  **prebudí** (maskovaný ako zamknutý `zamok-kryt`, po príchode cesty záblesk+pulz). Finále bez re-kreslenia cesty (nádych
-  2,5 s → whoosh). Zvuky `kroky` (animationstart) + `pergamen` (otvorenie clue/zrolovanie pri zavretí); pauzy zladené
-  (`--cesta-pauza` 1,7 s). Pergamen mizne fadeom (obsah zamrznutý — reset až po skrytí; oprava prekliku). **⚠ TEST_REZIM_BEZ_HESIEL=true**
-  (heslá vypnuté + štítok) — **pred go-live prepnúť na false!** 3× cold review. (resume: Fáza 8 — offline TS-002 + generálka TS-007 s reálnymi heslami).
-- **S13 (2026-07-03)** — **Zvuk — úprava správania + UI**: prostredie po odhalení symbolu (fade-out na harfu), D2 wind,
-  D1 ovce+vtáky (pole), burger → 2 ikonky vpravo dole. 3× cold review: 0 defektov. Detail v STATUS.md.
+  Jeruzaleme v zlate, stop pri prekliku/Escape/resete) + oprava „Vypnúť zvuk" — stlmenie na VŠETKY `<audio>`.
+- **S14 (2026-07-04)** — **Dramaturgia večera + zvuky kroky/pergamen + TEST režim** (od S16 vypnutý). Poradie:
+  symbol → cesta k blikajúcemu bodu (BR-003 reinterpretácia, Jakub OK) → prebudenie bodu. Detail v STATUS.md.

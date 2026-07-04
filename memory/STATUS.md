@@ -4,6 +4,14 @@ one Read call ingests it (move old detail to session notes when it grows)._
 
 ## Recent sessions (rolling window)
 
+- **S16 (2026-07-04)** — **Fáza 8 — testovanie + go-live: HOTOVÁ.** (1) Kódový offline audit čistý: žiadny
+  sieťový odkaz (jediné http = SVG namespace konštanty), všetkých 12 obrázkov + 17 mp3 v kóde sedí s diskom
+  presne aj veľkosťou písmen (Pages-safe). (2) Overená normalizácia hesla (`normalizujHeslo`, app.js:436):
+  bez diakritiky + malé písmená + zlúčené medzery na OBOCH stranách — vedúci môže písať bez diakritiky.
+  (3) **TEST režim VYPNUTÝ** (`TEST_REZIM_BEZ_HESIEL=false`, commit `2e3d13c`) — heslá sa kontrolujú, štítok
+  preč. (4) **TS-002 offline test + TS-007 generálka PREŠLI** (Jakub, bez internetu, `file://`, reálne heslá
+  vrátane testu bez diakritiky/preklepu/Enter/prázdneho poľa; celé finále + slučka harfy OK). Zo go-live
+  checklistu ostáva LEN bod 4: hlasitosti doladiť na mieste (táborová aparatúra). Appka je go-live ready.
 - **S15 (2026-07-04)** — **Slávnostný zvuk `zaver` na záverečnej obrazovke finále** (Jakub, prehliadač; 1× cold
   review). Nový jednorazový zvuk (17. mp3, dodala Janka cez ElevenLabs, ~8 s, hlasitosť 1.0) hrá v `ukazZaverecnu`
   (Jeruzalem v zlate + „Dávidova cesta sa skončila…", harfa hrá ďalej pod ním); helper `zastavZaver()` ho stopne
@@ -188,9 +196,9 @@ one Read call ingests it (move old detail to session notes when it grows)._
 - ✅ Dramaturgia večera — poradie symbol→cesta→prebudenie bodu, cesta k aktívnemu bodu, finále s nádychom,
   zvuky kroky+pergamen, pergamen fade (S14)
 - ✅ Slávnostný zvuk `zaver` na záverečnej obrazovke finále + oprava „Vypnúť zvuk" na všetky zvuky (S15)
-- ⬜ Fáza 8 — test: offline verification (TS-002) + generálka (TS-007 s REÁLNYMI heslami) + go-live checklist
-  (vypnúť TEST režim!) — NEXT
-- ⬜ Camp-ready hand-off to the leader
+- ✅ Fáza 8 — test: offline audit (0 sieťových odkazov, case-match assets), TEST režim vypnutý, TS-002
+  offline + TS-007 generálka s reálnymi heslami prešli (S16)
+- ⬜ Camp-ready hand-off to the leader (súbory + krátky návod; hlasitosti sa doladia na mieste) — NEXT
 
 ## System / data state
 
@@ -205,8 +213,8 @@ one Read call ingests it (move old detail to session notes when it grows)._
   **S14:** cesta vedie až k AKTÍVNEMU bodu (nikdy k uzamknutému); časovanie kreslenia má jediný domov
   v CSS `:root` (`--cesta-pauza` 1.7s / `--cesta-kreslenie` 1.8s / `--cesta-hotova`); po odomknutí je ďalší
   bod maskovaný (`zamok-kryt`) a prebudí sa po príchode cesty; finále cestu NErekreslí (nádych 2.5s → vlna).
-- **⚠ TEST režim (S14):** `TEST_REZIM_BEZ_HESIEL=true` v `app.js` — heslá vypnuté na testovanie, na
-  obrazovke štítok „TEST". **Go-live vyžaduje prepnúť na false** (karta v ACTIVE.md).
+- **TEST režim VYPNUTÝ od S16:** `TEST_REZIM_BEZ_HESIEL=false` v `app.js` — heslá sa kontrolujú
+  (normalizácia: bez diakritiky, malé písmená, zlúčené medzery — obojstranne).
 - Tests: none yet.
 - Assets present: `audio/` — **17 mp3** (S8 dodal 13, S13 pridal `sheep` + vymenil `cave`, S14 pridal
   `kroky` + `pergamen`: kroky = putovanie pri kreslení cesty cez `animationstart`, 0.9; pergamen =

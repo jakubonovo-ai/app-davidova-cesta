@@ -3,25 +3,23 @@ _The ONE task this session is doing, plus the ordered next-pick queue. Read on
 bootstrap. NOT a history log — shipped cards leave here entirely._
 
 ## NOW
-**Fáza 8 — test: offline verification + generálka + go-live checklist.**
-- TS-002: otvoriť `index.html` bez internetu (z `file://`) a overiť všetko bez siete (obrázky, zvuk
-  vrátane nových `kroky.mp3`/`pergamen.mp3` zo S14, localStorage). Prípadne aj GitHub Pages
-  (case-sensitivity `.jfif`).
-- TS-007 generálka: prehrať 5 dní naraz vrátane zvuku (bez dátumovej brány).
-
-**Go-live checklist (S14 — POVINNÉ pred odovzdaním, poradie záväzné):**
-1. ⚠ **`TEST_REZIM_BEZ_HESIEL = false`** v `app.js` (hore v súbore) — heslá sa zas kontrolujú,
-   štítok „TEST" zmizne. Bez tohto NEODOVZDAŤ.
-2. Generálku (TS-007) prehrať **s reálnymi heslami** (diakritika, preklepy, Enter) — testy v S14
-   bežali s vypnutými heslami.
-3. Overiť plynulosť slučky harfy `ambient.mp3` (otvorený bod zo S7 — generovaná bez loop režimu).
-4. Hlasitosti doladiť na mieste (projektorová aparatúra ≠ PC reproduktory) — všetko v `HLASITOSTI`.
+**Camp-ready hand-off vedúcemu.**
+- Súbory na priame otvorenie `index.html` (offline balík — celý priečinok, nie len jeden súbor)
+  + krátky návod pre vedúceho (ovládanie: klik, Escape, reset, zvuk; heslá dní).
+- Na mieste (tábor): doladiť hlasitosti na projektorovej aparatúre — všetko v `HLASITOSTI`
+  (`app.js`); posledný zvyšný bod go-live checklistu zo S14.
+- **Otvorené rozhodnutie pred pushom (Jakub):** repo je public a heslá sú čitateľné v `app.js` —
+  nechať public, alebo prepnúť na private? 22 lokálnych commitov zatiaľ nepushnutých (zámer:
+  push „na konci" — appka už JE hotová a otestovaná).
 
 ## NEXT (ordered next-pick queue)
-1. Fáza 8 — viď NOW.
-2. Camp-ready hand-off vedúcemu (súbory na priame otvorenie `index.html` + krátky návod).
+1. Camp-ready hand-off — viď NOW.
 
 ## Recently shipped
+- **Fáza 8 — testovanie + go-live (S16):** offline audit čistý (0 sieťových odkazov; 12 obrázkov +
+  17 mp3 case-match s diskom → Pages-safe), normalizácia hesiel overená (funguje bez diakritiky),
+  TEST režim VYPNUTÝ (`TEST_REZIM_BEZ_HESIEL=false`), TS-002 offline test + TS-007 generálka
+  s reálnymi heslami prešli (Jakub, vrátane preklepu/Enter/prázdneho poľa/slučky harfy/celého finále).
 - Slávnostný zvuk `zaver` na záverečnej obrazovke finále (S15): hrá pri Jeruzaleme v zlate, stopne sa
   pri prekliku na totem/Escape/resete; oprava „Vypnúť zvuk" — stlmenie sa teraz premietne na VŠETKY
   zvuky vrátane znejúcich jednorazových. `zaver.mp3` dodala Janka, otestované (Jakub).
