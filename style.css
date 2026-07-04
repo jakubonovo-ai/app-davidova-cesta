@@ -244,16 +244,19 @@ body {
 }
 
 /* =========================================================================
-   Burger menu operátora — nenápadné v pravom hornom rohu.
-   Obsahuje zatiaľ len reset postupu (za potvrdením v app.js).
+   Ovládanie operátora — dve nenápadné ikonky v pravom dolnom rohu:
+   reset postupu (kruhová šípka) + zapnutie/vypnutie zvuku (reproduktor).
+   Rovnaký vzhľad ako pôvodný burger (jemne priesvitné pozadie, hover stmavne).
    ========================================================================= */
-.menu {
+.ovladanie {
   position: absolute;
-  top: 2.5%;
+  bottom: 2.5%;
   right: 1.5%;
-  z-index: 40;                        /* nad pergamenovým prekryvom (z-index 30) → menu dostupné aj počas hesla/odomknutia */
+  z-index: 40;                        /* nad pergamenovým prekryvom (z-index 30) → dostupné aj počas hesla/odomknutia */
+  display: flex;
+  gap: 0.6cqw;                        /* dve ikonky vedľa seba */
 }
-.menu-tlacidlo {
+.ovlad-tlacidlo {
   display: block;
   width: 3.4cqw;
   min-width: 34px;
@@ -266,40 +269,22 @@ body {
   cursor: pointer;
   transition: background-color .15s ease;
 }
-.menu-tlacidlo:hover {
+.ovlad-tlacidlo:hover {
   background: rgba(20, 14, 6, 0.75);
 }
-.menu-tlacidlo svg {
+.ovlad-tlacidlo svg {
   width: 100%;
   height: 100%;
-  display: block;
-}
-.menu-tlacidlo svg rect {
   fill: currentColor;
 }
-.menu-obsah {
-  margin-top: 0.6cqw;
-  background: rgba(20, 14, 6, 0.96);
-  border: 1px solid rgba(214, 173, 95, 0.5);
-  border-radius: 10px;
-  overflow: hidden;
-}
-.menu-polozka {
-  display: block;
-  width: 100%;
-  padding: 1cqw 1.6cqw;
-  border: 0;
-  background: transparent;
-  color: #f3e6c4;
-  font-family: inherit;
-  font-size: 2cqw;
-  white-space: nowrap;
-  text-align: left;
-  cursor: pointer;
-}
-.menu-polozka:hover {
-  background: rgba(214, 173, 95, 0.2);
-}
+/* Zvuk: vždy vidno LEN jednu ikonu. Default (zvuk zapnutý) = reproduktor s vlnkami;
+   pri .zvuk-vypnuty = preškrtnutý reproduktor. Selektory `.ovlad-tlacidlo svg.…` majú
+   vyššiu špecifickosť než `.ovlad-tlacidlo svg` vyššie (inak by sa `display` neuplatnil). */
+.ovlad-tlacidlo svg.ikona-reset { display: block; }
+.ovlad-tlacidlo svg.ikona-zvuk-zap { display: block; }
+.ovlad-tlacidlo svg.ikona-zvuk-vyp { display: none; }
+.ovlad-tlacidlo.zvuk-vypnuty svg.ikona-zvuk-zap { display: none; }
+.ovlad-tlacidlo.zvuk-vypnuty svg.ikona-zvuk-vyp { display: block; }
 
 /* =========================================================================
    Pergameny (obr.3 CLUE + obr.4 HESLO) — spoločný obal + pergamen s pozadím.

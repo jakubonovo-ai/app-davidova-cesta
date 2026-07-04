@@ -4,6 +4,23 @@ one Read call ingests it (move old detail to session notes when it grows)._
 
 ## Recent sessions (rolling window)
 
+- **S13 (2026-07-03)** — **Zvuk — úprava správania + UI ovládania** (Jakub, prehliadač, iteratívne; mimo plánu,
+  NIE Fáza 8). **(1) Prostredie sa presunulo z clue na odhalenie symbolu:** už NEhrá pri clue pergamene, ale
+  spustí sa až po `light_reveal` (po zjavení symbolu dňa) a hrá v slučke do zavretia pergamenu
+  (`spustiProstredie` presunuté do `ukazOdomknutie`). **(2) D2 Prak: `water`→`wind`** (vietor, prak = kameň
+  vzduchom; `water` sa stal nenapojenou rezervou; `wind` bola dovtedy nevyužitá rezerva, teraz napojená na 1.0
+  bo bol slabý). **(3) Harfa počas clue+hesla stlmená na 0.20** (`HLASITOST_HARFY_CLUE`; `stlmHarfu` rozšírená na
+  boolean|number, `Math.min` s cieľovou — rešpektuje vypnutý zvuk); vráti sa v `dokonciOdomknutie`/`zavriHeslo`.
+  **(4) Symbol dlhšie:** `TRVANIE_SYMBOLU_MS` 4000→6000. **(5) Prostredie zhlasnené** 0.7→0.9 (birds/leaves),
+  wind 1.0. **(6) D1 Pastier = ovce + vtáky spolu** (`DNI[0].zvuk=["birds","sheep"]`): `spustiProstredie`/
+  `zastavProstredie`/`prepniZvuk` prerobené zo skalára na POLE (viac prostredí naraz); nový `sheep.mp3` +
+  `<audio id="zvuk-sheep">`, `sheep:0.7`. **(7) Jemný prechod prostredie→harfa:** `fadeOutProstredia` (setInterval,
+  800 ms fade-out) pred návratom harfy; `dokonciOdomknutie(okamzite)` — prirodzené dobehnutie = fade, preskočenie
+  vedúcim (klik/Escape) = okamžite. **(8) `cave.mp3` vymenené** (Janka, silnejšia nahrávka; problém bola len cache).
+  **(9) Burger menu ZRUŠENÉ** → dve samostatné ikonky vpravo DOLE (`.ovladanie`): reset (kruhová šípka) + zvuk
+  (reproduktor↔preškrtnutý cez `.zvuk-vypnuty` triedu); `prepniMenu`/`zavriMenu` odstránené, `obnovMenuZvuk`
+  prepína ikonu+aria-label. 3× cold review (fade race, pole vs skalár, náhrada menu): **0 defektov**; 1 CSS špecifickosť
+  bug (obe zvuk-ikony naraz) opravený (`.ovlad-tlacidlo svg.ikona-*`). Otestované v prehliadači (Jakub): všetko OK.
 - **S12 (2026-07-03)** — **TASK MAPA.1: spojovacia „cesta" medzi zastávkami na mape** (Jakub, prehliadač,
   iteratívne; commit `88f1883`). **Zlatá bodková cesta** (variant D: tmavý obrys `.halo` + zlaté jadro
   `.core`) medzi dokončenými bodmi; SVG `#cesta` medzi `.pozadie` a `#zastavky`. **BR-003:** kreslí sa len
@@ -136,6 +153,8 @@ one Read call ingests it (move old detail to session notes when it grows)._
 - ✅ Fáza 5 — D5 finálna sekvencia (finálna mapa + záverečná + TOTEM + SIFRA + 13177 + truhlica) (S6)
 - ✅ Fáza 6 — zvuk (13 mp3 napojených + tichý fallback + menu „Vypnúť zvuk") (S8)
 - ✅ Fáza 7 — polish (`onerror`/`onload` fallback pre `<img>` — rozbitá ikona sa skryje, žiadny spoiler) (S10)
+- ✅ Zvuk — úprava správania (prostredie po odhalení symbolu, fade prechod, D2 vietor, D1 ovce+vtáky) +
+  UI ovládanie (burger → 2 ikonky vpravo dole: reset + zvuk) (S13)
 - ⬜ Fáza 8 — test: offline verification (TS-002, open index.html no internet) + generálka (TS-007) — NEXT
 - ⬜ Camp-ready hand-off to the leader
 
@@ -150,12 +169,14 @@ one Read call ingests it (move old detail to session notes when it grows)._
   rovná čiara). Cesta = SVG `#cesta` (variant D bodky, škálované cqw/pomer k W). Animácia po dĺžke
   (SVG maska + `stroke-dashoffset`). Kruhy `.stav-*` majú J1 zvýraznenie + O1 inset obrys (cqw).
 - Tests: none yet.
-- Assets present: `audio/` — **13 zvukových mp3 dodaných a napojených (S8)**: `ambient` (harfa, loop),
-  `seal_crack` (odomknutie zámku), `light_reveal` („wow"), `birds` D1, `water` D2, `leaves` D3, `cave` D4,
-  `market` D5 (ruch trhu), `celebration` (fanfára truhlica), `whoosh` (prelet svetelnej vlny, 4,2 s, nie loop),
-  `tick` (loop tikanie šifry), `mystery` (prekvapenie + šifra). `wind` = zámerná NEnapojená rezerva.
-  Generované cez ElevenLabs Sound Effects. Loop `ambient` overený OK (Jakub, S8). Hlasitosti vyvážené
-  v `HLASITOSTI` (`app.js`). Pozn.: `cave`/whoosh boli slabé — riešiteľné len hlasnejším súborom (kód púšťa 1.0).
+- Assets present: `audio/` — **14 mp3** (S8 dodal 13, **S13 pridal `sheep`** + vymenil `cave`). Prostredie sa
+  od **S13** už NEspúšťa pri clue, ale **až po odhalení symbolu** (`light_reveal`) a hrá do zavretia pergamenu;
+  na konci **jemný fade-out** (`fadeOutProstredia`, 800 ms) pred návratom harfy (preskočenie vedúcim = okamžite).
+  Zvuky prostredia dní: **D1 `birds`+`sheep` (spolu — pole)**, **D2 `wind`** (S13: z `water`), D3 `leaves`,
+  D4 `cave` (S13 silnejšia nahrávka), D5 `market`. Ostatné: `ambient` (harfa, loop; počas clue+hesla stlmená
+  na 0.20), `seal_crack`, `light_reveal`, `celebration`, `whoosh` (4,2 s, nie loop), `tick` (loop), `mystery`.
+  **`water` = teraz nenapojená rezerva** (S13). Hlasitosti v `HLASITOSTI` (`app.js`): prostredia 0.9, wind/cave 1.0,
+  sheep 0.7. `spustiProstredie` prijíma string ALEBO pole (viac prostredí naraz). Generované cez ElevenLabs.
 - Assets present: `app_images/` — **5 symbolov mapy má od S9 nové vizuálne verzie** (staré originály ponechané, nedotknuté):
   D1 `PASTIER_chlapec.png` (orezaný chlapec+ovečka), D2 `PRAK_blizko.png` (prekomponovaný+sýtejší), D3 `JONATAN_sat.png`,
   D4 `jask_sat.png`, D5 `JERUZALEM_sat.png` (sýtejšie). **Veľkosti na mape doladené S11** (`DNI[].mapa.velkost`):

@@ -36,20 +36,29 @@
       <div id="zastavky" class="zastavky"></div>
     </section>
 
-    <!-- Burger menu operátora (vždy dostupné, nenápadné v rohu) -->
-    <div class="menu">
-      <button id="menu-tlacidlo" class="menu-tlacidlo" type="button"
-              aria-label="Menu" aria-expanded="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <rect x="3" y="5"  width="18" height="2.4" rx="1.2"></rect>
-          <rect x="3" y="11" width="18" height="2.4" rx="1.2"></rect>
-          <rect x="3" y="17" width="18" height="2.4" rx="1.2"></rect>
+    <!-- Ovládanie operátora (vždy dostupné, nenápadné v pravom dolnom rohu):
+         samostatná ikonka na reset postupu + samostatná ikonka na zapnutie/vypnutie zvuku. -->
+    <div class="ovladanie">
+      <button id="tlacidlo-reset" class="ovlad-tlacidlo" type="button" aria-label="Vynulovať postup">
+        <svg class="ikona-reset" viewBox="0 0 24 24" aria-hidden="true">
+          <!-- Kruhová šípka „obnoviť / začať odznova". -->
+          <path d="M12 5V2L8 6l4 4V7a5 5 0 1 1-5 5H5a7 7 0 1 0 7-7z"></path>
         </svg>
       </button>
-      <div id="menu-obsah" class="menu-obsah skryta">
-        <button id="tlacidlo-zvuk" class="menu-polozka" type="button">Vypnúť zvuk</button>
-        <button id="tlacidlo-reset" class="menu-polozka" type="button">Vynulovať postup</button>
-      </div>
+      <button id="tlacidlo-zvuk" class="ovlad-tlacidlo" type="button" aria-label="Vypnúť zvuk">
+        <!-- Reproduktor (zvuk zapnutý) — zvukové vlny sa skryjú keď je zvuk vypnutý (trieda .zvuk-vypnuty). -->
+        <svg class="ikona-zvuk-zap" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 9v6h4l5 5V4L8 9H4z"></path>
+          <path class="vlny" d="M16 8.5a4 4 0 0 1 0 7M18.5 6a7.5 7.5 0 0 1 0 12" fill="none"
+                stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+        </svg>
+        <!-- Preškrtnutý reproduktor (zvuk vypnutý) — zobrazí sa cez triedu .zvuk-vypnuty. -->
+        <svg class="ikona-zvuk-vyp" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 9v6h4l5 5V4L8 9H4z"></path>
+          <path d="M16 9l5 5M21 9l-5 5" fill="none" stroke="currentColor"
+                stroke-width="1.8" stroke-linecap="round"></path>
+        </svg>
+      </button>
     </div>
 
     <!--
@@ -165,8 +174,9 @@
   <audio id="zvuk-seal_crack" src="audio/seal_crack.mp3" preload="auto"></audio>
   <audio id="zvuk-light_reveal" src="audio/light_reveal.mp3" preload="auto"></audio>
   <audio id="zvuk-celebration" src="audio/celebration.mp3" preload="auto"></audio>
-  <!-- Zvuky prostredia dňa: loop → hrajú v slučke, kým vedúci neklikne „Ďalej". -->
+  <!-- Zvuky prostredia dňa: loop → hrajú v slučke po odhalení symbolu, kým sa pergamen nezavrie. -->
   <audio id="zvuk-birds" src="audio/birds.mp3" loop preload="auto"></audio>
+  <audio id="zvuk-sheep" src="audio/sheep.mp3" loop preload="auto"></audio>
   <audio id="zvuk-water" src="audio/water.mp3" loop preload="auto"></audio>
   <audio id="zvuk-leaves" src="audio/leaves.mp3" loop preload="auto"></audio>
   <audio id="zvuk-cave" src="audio/cave.mp3" loop preload="auto"></audio>

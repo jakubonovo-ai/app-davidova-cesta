@@ -20,19 +20,13 @@ a store — detail lives in STATUS.md and session notes. One line per session in
 ## Last session
 _Newest first. ONE line per session: outcome headline + (resume: next action) if paused._
 
+- **S13 (2026-07-03)** — **Zvuk — úprava správania + UI** (Jakub, prehliadač, mimo plánu). Prostredie sa presunulo
+  z clue na **odhalenie symbolu** (po `light_reveal`, do zavretia pergamenu) s **jemným fade-out prechodom** na harfu;
+  D2 Prak **`water`→`wind`**; D1 Pastier **ovce+vtáky spolu** (`spustiProstredie` prerobené na POLE, nový `sheep.mp3`);
+  harfa počas clue+hesla stlmená (0.20); symbol dlhšie (6 s); `cave.mp3` vymenené. **Burger menu → 2 ikonky vpravo dole**
+  (reset + zvuk reproduktor/preškrtnutý). 3× cold review: 0 defektov (+1 CSS špecifickosť bug opravený). (resume: Fáza 8 — offline test TS-002 + generálka TS-007).
 - **S10 (2026-07-03)** — **Fáza 7 — polish hotová** (Jakub, prehliadač). `onerror`/`onload` fallback pre `<img>`
   (`pripravFallbackObrazka` v `app.js`): nenačítaný obrázok sa skryje na neutrálny podklad (žiadna rozbitá ikona
-  na stene, žiadny spoiler BR-003), `onload` ho zas zobrazí. Naviazané na `.stage img` + dynamický symbol mapy.
-  Cold review: 0 defektov. EC-katalóg BRS neriešený (neaplikovateľný). (resume: Fáza 8 — offline test TS-002 + generálka TS-007).
-- **S9 (2026-07-02)** — **Vizuálne doladenie 5 symbolov na mape** (Jakub, prehliadač; mimo plánu, nie Fáza 7).
-  Nová per-deň mechanika `mapa{velkost/fit/orez/posunX/posunY}` v `DNI[]` → CSS premenné (`nastavMapuSymbolu`);
-  `.zastavka` z `width:15%+aspect-ratio` na `15cqw×15cqw` (oprava elipsy); `.stav-dokoncena` maskuje `overflow:hidden`.
-  Nové obrázky: `PASTIER_chlapec.png` (orezaný chlapec+ovečka), `PRAK_blizko.png` (prak+kamene pri sebe, sýtejšie),
-  `JONATAN_sat.png`/`jask_sat.png`/`JERUZALEM_sat.png` (sýtejšie farby). Originály nedotknuté. Cold review: 0 reálnych
-  defektov (1 kozmetika kat.11 = `orez` jednohodnotový flag, ponechané). (resume: Fáza 7 — polish, `onerror` pre `<img>`).
-- **S8 (2026-07-02)** — **Fáza 6 (zvuk) hotová a otestovaná** (Jakub, prehliadač): harfa `ambient` loop
-  (štart na 1. klik), zvuky prostredia D1–D5 v slučke do „Ďalej" (D5 = `market` ruch trhu), `seal_crack`+
-  `light_reveal` pri odomknutí (harfa sa vtedy stlmí na 0 a vráti), `whoosh` (4,2 s prelet cez svetelnú vlnu,
-  nie loop), `mystery`+`tick` (loop) pri šifre, `celebration` fanfára pri truhlici. Menu „Vypnúť zvuk"
-  (uložené v `davidovaCesta.zvuk`). Chýbajúci mp3 = ticho (EC-005). **Všetkých 13 mp3 dodaných.** 3× cold
-  review: 0 reálnych defektov. (resume: Fáza 7 — polish, `onerror` fallback pre `<img>`).
+  na stene, žiadny spoiler BR-003), `onload` ho zas zobrazí. (resume: Fáza 8 — offline test TS-002 + generálka TS-007).
+- **S9 (2026-07-02)** — Vizuálne doladenie 5 symbolov na mape (per-deň `mapa{}` mechanika, oprava elipsy). Detail v STATUS.md.
+- **S8 (2026-07-02)** — Fáza 6 (zvuk) postavená — 13 mp3 napojených (S13 neskôr zmenil, kedy hrá prostredie). Detail v STATUS.md.
